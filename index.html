@@ -8,197 +8,185 @@
 <style>
 body{
 margin:0;
-font-family:Arial;
+font-family:system-ui, Arial;
+background:#f7f7f7;
+}
+
+/* TOP NAV */
+.topbar{
 display:flex;
-background:#f5f5f5;
-}
-
-/* SIDEBAR */
-.sidebar{
-width:260px;
-background:#111;
-color:white;
-height:100vh;
-padding:15px;
-box-sizing:border-box;
-}
-
-.sidebar h2{
-margin-top:0;
-}
-
-.sidebar input{
-width:100%;
-padding:8px;
-margin:5px 0;
-border:none;
-border-radius:5px;
-}
-
-.sidebar button{
-width:100%;
-padding:10px;
-background:#ff3f6c;
-border:none;
-color:white;
-border-radius:5px;
-cursor:pointer;
-margin-top:10px;
-}
-
-/* MAIN */
-.main{
-flex:1;
-padding:15px;
-}
-
-header{
+justify-content:space-between;
+align-items:center;
+padding:15px 25px;
 background:white;
-padding:15px;
-border-radius:10px;
-margin-bottom:15px;
+box-shadow:0 2px 12px rgba(0,0,0,0.08);
+position:sticky;
+top:0;
+z-index:10;
+}
+
+.logo{
 font-size:22px;
-font-weight:bold;
-box-shadow:0 2px 10px rgba(0,0,0,0.1);
+font-weight:700;
+letter-spacing:1px;
+}
+
+.search{
+width:40%;
+padding:10px;
+border:1px solid #ddd;
+border-radius:8px;
+}
+
+/* HERO */
+.hero{
+margin:15px;
+height:250px;
+border-radius:15px;
+background:linear-gradient(120deg,#111,#444);
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+font-weight:600;
+}
+
+/* CATEGORY */
+.catbar{
+display:flex;
+gap:10px;
+padding:10px 15px;
+overflow-x:auto;
+}
+
+.cat{
+background:white;
+padding:10px 16px;
+border-radius:25px;
+box-shadow:0 2px 8px rgba(0,0,0,0.05);
+white-space:nowrap;
+font-size:14px;
 }
 
 /* PRODUCTS */
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:15px;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:18px;
+padding:15px;
 }
 
 .card{
 background:white;
-border-radius:10px;
+border-radius:14px;
 overflow:hidden;
-box-shadow:0 3px 10px rgba(0,0,0,0.1);
-text-align:center;
+box-shadow:0 4px 15px rgba(0,0,0,0.08);
+transition:0.25s;
+}
+
+.card:hover{
+transform:translateY(-6px);
 }
 
 .card img{
 width:100%;
-height:180px;
+height:220px;
 object-fit:cover;
 }
 
-.price{
-color:green;
-font-weight:bold;
+.card h3{
+margin:10px;
+font-size:16px;
 }
 
-button.buy{
+.price{
+margin:0 10px;
+color:#1a7f37;
+font-weight:600;
+}
+
+.btn{
+width:90%;
+margin:10px 5%;
+padding:10px;
+border:none;
 background:#ff3f6c;
 color:white;
-border:none;
-padding:8px;
-width:90%;
-margin-bottom:10px;
-border-radius:5px;
+border-radius:8px;
 cursor:pointer;
+font-weight:600;
+}
+
+.btn:hover{
+background:#e6325f;
 }
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR EDIT PANEL -->
-<div class="sidebar">
-
-<h2>Edit Panel</h2>
-
-<input id="pname" placeholder="Product Name">
-<input id="pprice" placeholder="Price">
-<input id="pimg" placeholder="Image URL">
-
-<button onclick="add()">Add Product</button>
-
+<!-- HEADER -->
+<div class="topbar">
+<div class="logo">FIT HUB</div>
+<input class="search" placeholder="Search products, brands...">
 </div>
 
-<!-- MAIN AREA -->
-<div class="main">
-
-<header>FIT HUB - Premium Fashion Store</header>
-
-<div class="grid" id="list"></div>
-
+<!-- HERO -->
+<div class="hero">
+Premium Fashion Collection
 </div>
 
-<!-- FIREBASE -->
-<script type="module">
+<!-- CATEGORIES -->
+<div class="catbar">
+<div class="cat">Men</div>
+<div class="cat">Women</div>
+<div class="cat">T-Shirts</div>
+<div class="cat">Hoodies</div>
+<div class="cat">Jeans</div>
+<div class="cat">New Arrivals</div>
+</div>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+<!-- PRODUCTS -->
+<div class="grid">
 
-/* 🔥 YOUR FIREBASE CONFIG */
-const firebaseConfig = {
-  apiKey: "AIzaSyCCZROy6wzevuizlgRXgjY05VQBWRicNMY",
-  authDomain: "fithub-9a878.firebaseapp.com",
-  databaseURL: "https://fithub-9a878-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "fithub-9a878",
-  storageBucket: "fithub-9a878.firebasestorage.app",
-  messagingSenderId: "541686780215",
-  appId: "1:541686780215:web:c0dd12bf5353f23eaecab2"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-/* LOAD PRODUCTS (AUTO SYNC) */
-function load(){
-const dbRef = ref(db,"products");
-
-onValue(dbRef,(snap)=>{
-let data = snap.val() || {};
-let box = document.getElementById("list");
-box.innerHTML = "";
-
-Object.keys(data).forEach(k=>{
-let p = data[k];
-
-box.innerHTML += `
 <div class="card">
-<img src="${p.img}">
-<h3>${p.name}</h3>
-<p class="price">₹${p.price}</p>
+<img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf">
+<h3>Black Shirt</h3>
+<p class="price">₹799</p>
+<button class="btn" onclick="buy('Black Shirt',799)">BUY NOW</button>
+</div>
 
-<button class="buy" onclick="buy('${p.name}',${p.price})">Buy Now</button>
-</div>`;
-});
-});
-}
+<div class="card">
+<img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518">
+<h3>White Shirt</h3>
+<p class="price">₹699</p>
+<button class="btn" onclick="buy('White Shirt',699)">BUY NOW</button>
+</div>
 
-/* ADD PRODUCT */
-window.add = function(){
-let name = document.getElementById("pname").value;
-let price = document.getElementById("pprice").value;
-let img = document.getElementById("pimg").value;
+<div class="card">
+<img src="https://images.unsplash.com/photo-1520975958225-0c7f5c0c1f2d">
+<h3>Premium Hoodie</h3>
+<p class="price">₹1299</p>
+<button class="btn" onclick="buy('Hoodie',1299)">BUY NOW</button>
+</div>
 
-set(ref(db,"products/"+Date.now()),{
-name,price,img
-});
-}
+</div>
 
-/* WHATSAPP ORDER */
-window.buy = function(name,price){
+<script>
+function buy(name,price){
 
-let phone = prompt("Phone Number");
-let address = prompt("Address");
+let phone=prompt("Phone Number");
+let address=prompt("Address");
 
-let msg = `Order:
+let msg=`🛍 Order:
 Product: ${name}
 Price: ₹${price}
 Phone: ${phone}
 Address: ${address}`;
 
-let number = "917736789255";
-
-window.open("https://wa.me/"+number+"?text="+encodeURIComponent(msg));
+window.open("https://wa.me/917736789255?text="+encodeURIComponent(msg));
 }
-
-load();
-
 </script>
 
 </body>
