@@ -10,16 +10,14 @@ body{margin:0;font-family:Arial;background:#f5f5f5;}
 
 /* HEADER */
 header{
-background:#111;color:white;
+background:#111;
+color:white;
 padding:15px;
 text-align:center;
 font-size:22px;
 }
 
-/* MENU */
-nav{
-margin-top:10px;
-}
+/* NAV */
 nav button{
 background:white;
 color:black;
@@ -31,7 +29,7 @@ cursor:pointer;
 }
 
 /* SECTIONS */
-section{display:none;padding:20px;}
+section{display:none;padding:15px;}
 .active{display:block;}
 
 /* HERO */
@@ -46,7 +44,7 @@ font-size:28px;
 font-weight:bold;
 }
 
-/* PRODUCTS */
+/* GRID */
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
@@ -94,16 +92,14 @@ FIT HUB
 <nav>
 <button onclick="show('home')">Home</button>
 <button onclick="show('products')">Products</button>
-<button onclick="show('contact')">Contact</button>
+<button onclick="show('contact')">Order</button>
 </nav>
 
 </header>
 
 <!-- HOME -->
 <section id="home" class="active">
-<div class="hero">
-Premium Fashion Store
-</div>
+<div class="hero">Premium Fashion Store</div>
 <h2 style="text-align:center;">Welcome to Fit Hub</h2>
 <p style="text-align:center;">Luxury Clothing Collection</p>
 </section>
@@ -140,10 +136,10 @@ Premium Fashion Store
 
 </section>
 
-<!-- CONTACT -->
+<!-- ORDER -->
 <section id="contact">
 
-<h2>Order / Contact</h2>
+<h2>Place Order</h2>
 
 <input type="text" id="name" placeholder="Name">
 <input type="text" id="phone" placeholder="Phone">
@@ -155,23 +151,23 @@ Premium Fashion Store
 
 <script>
 
+let selectedProduct="";
+let selectedPrice=0;
+
 /* PAGE SWITCH */
 function show(page){
 document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
 document.getElementById(page).classList.add("active");
 }
 
-/* ORDER */
-let selectedProduct = "";
-let selectedPrice = 0;
-
+/* SELECT PRODUCT */
 function order(name,price){
-selectedProduct = name;
-selectedPrice = price;
+selectedProduct=name;
+selectedPrice=price;
 show('contact');
 }
 
-/* WHATSAPP ORDER */
+/* WHATSAPP ORDER FIXED */
 function send(){
 
 let name=document.getElementById("name").value;
@@ -185,7 +181,11 @@ let msg =
 "%0APhone: "+phone+
 "%0AAddress: "+address;
 
-window.open("https://wa.me/91YOURNUMBER?text="+msg);
+let number="917736789255";
+
+let url="https://wa.me/"+number+"?text="+encodeURIComponent(msg);
+
+window.open(url,"_blank");
 
 }
 
