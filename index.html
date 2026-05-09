@@ -75,7 +75,6 @@ FIT HUB
 <button onclick="show('home')">Home</button>
 <button onclick="show('products')">Products</button>
 <button onclick="show('order')">Order</button>
-<button onclick="login()">Admin</button>
 </nav>
 
 </header>
@@ -88,17 +87,34 @@ FIT HUB
 
 <!-- PRODUCTS -->
 <section id="products">
+
 <h2>Products</h2>
 
-<div id="adminBox" style="display:none;">
-<h3>Admin Panel</h3>
-<input id="pname" placeholder="Product Name">
-<input id="pprice" placeholder="Price">
-<input id="pimg" placeholder="Image URL">
-<button onclick="add()">Add Product</button>
+<div class="grid">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf">
+<h3>Black Shirt</h3>
+<p>₹799</p>
+<button onclick="buy('Black Shirt',799)">Buy</button>
 </div>
 
-<div class="grid" id="list"></div>
+<div class="card">
+<img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518">
+<h3>White Shirt</h3>
+<p>₹699</p>
+<button onclick="buy('White Shirt',699)">Buy</button>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1520975958225-0c7f5c0c1f2d">
+<h3>Hoodie</h3>
+<p>₹1299</p>
+<button onclick="buy('Hoodie',1299)">Buy</button>
+</div>
+
+</div>
+
 </section>
 
 <!-- ORDER -->
@@ -112,69 +128,26 @@ FIT HUB
 <button onclick="send()">Send Order</button>
 </section>
 
-<script type="module">
+<script>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-/* 🔥 FIREBASE CONFIG (replace yours) */
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "YOUR_DB_URL",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_BUCKET",
-  messagingSenderId: "XXXX",
-  appId: "XXXX"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-let isAdmin=false;
 let selectedName="";
 let selectedPrice="";
 
-/* PAGE */
-window.show=function(p){
+/* PAGE SWITCH */
+function show(p){
 document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
 document.getElementById(p).classList.add("active");
 }
 
-/* LOAD PRODUCTS */
-function load(){
-const dbRef=ref(db,"products");
-onValue(dbRef,(snap)=>{
-let data=snap.val()||{};
-let box=document.getElementById("list");
-box.innerHTML="";
-
-Object.keys(data).forEach(k=>{
-let p=data[k];
-
-box.innerHTML+=`
-<div class="card">
-<img src="${p.img}">
-<h3>${p.name}</h3>
-<p>₹${p.price}</p>
-
-<button onclick="buy('${p.name}',${p.price})">Buy</button>
-
-${isAdmin ? `<button onclick="del('${k}')">Delete</button>` : ""}
-</div>`;
-});
-});
-}
-
-/* BUY */
-window.buy=function(name,price){
+/* BUY PRODUCT */
+function buy(name,price){
 selectedName=name;
 selectedPrice=price;
 show('order');
 }
 
 /* WHATSAPP ORDER */
-window.send=function(){
+function send(){
 
 let name=document.getElementById("name").value;
 let phone=document.getElementById("phone").value;
@@ -190,38 +163,8 @@ Address: ${address}`;
 let number="917736789255";
 
 window.open("https://wa.me/"+number+"?text="+encodeURIComponent(msg));
-}
 
-/* ADMIN LOGIN */
-window.login=function(){
-let pass=prompt("Enter Password");
-if(pass==="1234"){
-isAdmin=true;
-document.getElementById("adminBox").style.display="block";
-alert("Admin ON");
-load();
-}else{
-alert("Wrong Password");
 }
-}
-
-/* ADD PRODUCT */
-window.add=function(){
-let name=document.getElementById("pname").value;
-let price=document.getElementById("pprice").value;
-let img=document.getElementById("pimg").value;
-
-set(ref(db,"products/"+Date.now()),{
-name,price,img
-});
-}
-
-/* DELETE */
-window.del=function(key){
-set(ref(db,"products/"+key),null);
-}
-
-load();
 
 </script>
 
