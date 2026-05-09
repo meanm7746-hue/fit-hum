@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Fit Hub Premium Admin</title>
+<title>Fit Hub Premium Store</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -47,43 +47,8 @@ cursor:pointer;
 background:linear-gradient(135deg,#d6b36a,#8e6a2f);
 }
 
-/* HERO */
-.hero{
-min-height:92vh;
-padding:120px 25px 60px;
-display:flex;
-align-items:center;
-background:
-linear-gradient(to right,rgba(0,0,0,.72),rgba(0,0,0,.2)),
-url('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1600&q=80') center/cover;
-}
-
-.hero-box{max-width:620px}
-
-.hero h1{
-font-size:56px;
-line-height:1.05;
-margin-bottom:14px;
-}
-
-.hero p{
-font-size:17px;
-line-height:1.7;
-opacity:.9;
-margin-bottom:20px;
-}
-
-.hero button{
-padding:14px 22px;
-border:none;
-border-radius:16px;
-font-weight:900;
-cursor:pointer;
-background:linear-gradient(135deg,#d6b36a,#8e6a2f);
-}
-
 /* SECTION */
-.section{padding:55px 20px}
+.section{padding:100px 20px 55px}
 .title{
 font-size:34px;
 font-weight:900;
@@ -101,7 +66,7 @@ background:#141416;
 border-radius:24px;
 overflow:hidden;
 border:1px solid rgba(255,255,255,.05);
-box-shadow:0 18px 36px rgba(0,0,0,.25);
+cursor:pointer;
 }
 
 .card img{
@@ -111,27 +76,12 @@ object-fit:cover;
 }
 
 .card-body{padding:16px}
-
-.card h3{
-font-size:20px;
-margin-bottom:8px;
-}
+.card h3{font-size:20px;margin-bottom:8px}
 
 .price{
 font-size:24px;
 font-weight:900;
 color:#d6b36a;
-margin-bottom:12px;
-}
-
-.buy{
-width:100%;
-padding:12px;
-border:none;
-border-radius:14px;
-font-weight:900;
-cursor:pointer;
-background:linear-gradient(135deg,#d6b36a,#8e6a2f);
 }
 
 /* MODAL */
@@ -144,37 +94,49 @@ justify-content:center;
 align-items:center;
 padding:18px;
 z-index:3000;
+overflow:auto;
 }
 
 .overlay.show{display:flex}
 
 .modal{
 width:100%;
-max-width:470px;
+max-width:520px;
 background:#141416;
 border-radius:28px;
 padding:24px;
 border:1px solid rgba(255,255,255,.06);
 }
 
-.modal h2{font-size:28px;margin-bottom:10px}
-.modal p{opacity:.72;margin-bottom:14px}
-
-.modal input,.modal textarea{
+.modal img{
 width:100%;
-padding:13px;
-border:none;
-border-radius:14px;
-background:#202024;
-color:#fff;
-margin-bottom:10px;
+height:280px;
+object-fit:cover;
+border-radius:18px;
+margin-bottom:14px;
 }
 
-.modal textarea{height:90px;resize:none}
+.modal h2{font-size:28px;margin-bottom:8px}
+.modal p{opacity:.82;margin-bottom:10px;line-height:1.6}
+
+.size-wrap{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin:10px 0;
+}
+
+.size{
+padding:10px 14px;
+border-radius:12px;
+background:#202024;
+font-size:14px;
+}
 
 .row{
 display:flex;
 gap:10px;
+margin-top:14px;
 }
 
 .row button{
@@ -189,7 +151,7 @@ cursor:pointer;
 .cancel{background:#2a2a2f;color:#fff}
 .confirm{background:linear-gradient(135deg,#d6b36a,#8e6a2f)}
 
-/* ADMIN PANEL */
+/* ADMIN */
 .admin{
 position:fixed;
 top:0;
@@ -206,16 +168,7 @@ border-left:1px solid rgba(255,255,255,.05);
 
 .admin.show{right:0}
 
-.admin h3{
-font-size:24px;
-margin-bottom:12px;
-}
-
-.admin h4{
-margin:14px 0 10px;
-font-size:16px;
-color:#d6b36a;
-}
+.admin h3{font-size:24px;margin-bottom:12px}
 
 .admin input,.admin textarea{
 width:100%;
@@ -240,18 +193,9 @@ margin-bottom:8px;
 background:linear-gradient(135deg,#d6b36a,#8e6a2f);
 }
 
-.small{font-size:12px;opacity:.65}
-
-.product-admin{
-padding:10px;
-background:#191a1d;
-border-radius:14px;
-margin-bottom:10px;
-font-size:13px;
-}
+.small{font-size:12px;opacity:.7}
 
 @media(max-width:700px){
-.hero h1{font-size:38px}
 .admin{width:100%;right:-100%}
 }
 </style>
@@ -259,256 +203,169 @@ font-size:13px;
 <body>
 
 <header>
-<div class="logo" onclick="secretTap()">FIT HUB</div>
-<button class="shopbtn" onclick="goProducts()">SHOP NOW</button>
+<div class="logo" onclick="openAdmin()">FIT HUB</div>
+<button class="shopbtn">SHOP NOW</button>
 </header>
 
-<section class="hero">
-<div class="hero-box">
-<h1 id="heroTitle">Premium Fashion For Elite Style</h1>
-<p id="heroDesc">Luxury designs, premium comfort and timeless confidence.</p>
-<button onclick="goProducts()">EXPLORE NOW</button>
-</div>
-</section>
-
-<section class="section" id="products">
+<section class="section">
 <div class="title">Trending Collection</div>
 <div class="grid" id="grid"></div>
 </section>
 
-<!-- ORDER -->
-<div class="overlay" id="orderBox">
+<!-- PRODUCT DETAILS -->
+<div class="overlay" id="productBox">
 <div class="modal">
-<h2>Place Order</h2>
-<p id="orderLine"></p>
-<input id="custName" placeholder="Full Name">
-<input id="custPhone" placeholder="Phone Number">
-<textarea id="custAddress" placeholder="Delivery Address"></textarea>
+<img id="dImg">
+<h2 id="dName"></h2>
+<p id="dPrice"></p>
+<p><b>Fabric:</b> <span id="dFabric"></span></p>
+<p><b>Description:</b> <span id="dDesc"></span></p>
+
+<div class="size-wrap" id="dSizes"></div>
+
 <div class="row">
-<button class="cancel" onclick="closeOrder()">Cancel</button>
-<button class="confirm" onclick="sendOrder()">Confirm</button>
+<button class="cancel" onclick="closeProduct()">Close</button>
+<button class="confirm" onclick="buyNow()">Buy Now</button>
 </div>
 </div>
 </div>
 
-<!-- LOGIN -->
-<div class="overlay" id="loginBox">
-<div class="modal">
-<h2>Admin Login</h2>
-<p>Hidden secure access</p>
-<input type="password" id="pass" placeholder="Password">
-<div class="row">
-<button class="cancel" onclick="closeLogin()">Close</button>
-<button class="confirm" onclick="login()">Login</button>
-</div>
-</div>
-</div>
-
-<!-- ADMIN PANEL -->
+<!-- ADMIN -->
 <div class="admin" id="adminPanel">
 
-<h3>Admin Dashboard</h3>
+<h3>Admin Edit Product</h3>
 
-<h4>Hero Section</h4>
-<input id="aTitle" placeholder="Hero Title">
-<textarea id="aDesc" placeholder="Hero Description"></textarea>
-<button onclick="saveHero()">Save Hero</button>
-
-<h4>WhatsApp Number</h4>
-<input id="waNum" placeholder="91xxxxxxxxxx">
-<button onclick="saveNumber()">Save Number</button>
-
-<h4>Add Product</h4>
 <input id="pName" placeholder="Product Name">
 <input id="pPrice" placeholder="Price">
 <input id="pImg" placeholder="Image URL">
-<button onclick="addProduct()">Add Product</button>
+<input id="pFabric" placeholder="Fabric">
+<input id="pSizes" placeholder="Sizes (S,M,L,XL)">
+<textarea id="pDesc" placeholder="Description"></textarea>
 
-<h4>Manage Products</h4>
-<div id="productAdminList"></div>
+<button onclick="saveProduct()">Save Product</button>
+<button onclick="closeAdmin()">Close</button>
 
-<button onclick="closeAdmin()">Close Panel</button>
-<div class="small">Customers cannot see this panel.</div>
+<div class="small">Tap product card first to edit that product.</div>
 
 </div>
 
 <script>
-let taps=0;
-let selectedName="";
-let selectedPrice="";
-let currentEdit=-1;
-
-let settings=JSON.parse(localStorage.getItem("fit_settings"))||{
-title:"Premium Fashion For Elite Style",
-desc:"Luxury designs, premium comfort and timeless confidence.",
-wa:"917736789255"
-};
-
-let products=JSON.parse(localStorage.getItem("fit_products"))||[
-{name:"Royal Black Shirt",price:"799",img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=900&q=80"},
-{name:"Urban White Tee",price:"699",img:"https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80"}
+let products = [
+{
+name:"Royal Black Shirt",
+price:"799",
+img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=900&q=80",
+fabric:"100% Premium Cotton",
+sizes:"M,L,XL,XXL",
+desc:"Slim fit premium black shirt with elegant finish."
+},
+{
+name:"Urban White Tee",
+price:"699",
+img:"https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80",
+fabric:"Soft Cotton Blend",
+sizes:"S,M,L,XL",
+desc:"Clean everyday luxury white t-shirt."
+}
 ];
 
-function saveAll(){
-localStorage.setItem("fit_settings",JSON.stringify(settings));
-localStorage.setItem("fit_products",JSON.stringify(products));
-}
+let current = 0;
 
-/* LOAD */
-function loadSite(){
-heroTitle.innerText=settings.title;
-heroDesc.innerText=settings.desc;
-waNum.value=settings.wa;
-renderProducts();
-}
+function render(){
 
-/* PRODUCTS */
-function renderProducts(){
 grid.innerHTML="";
-productAdminList.innerHTML="";
 
 products.forEach((p,i)=>{
 
-grid.innerHTML+=`
-<div class="card">
+grid.innerHTML += `
+<div class="card" onclick="viewProduct(${i})">
 <img src="${p.img}">
 <div class="card-body">
 <h3>${p.name}</h3>
 <div class="price">₹${p.price}</div>
-<button class="buy" onclick="openOrder('${p.name}','${p.price}')">BUY NOW</button>
 </div>
-</div>
-`;
-
-productAdminList.innerHTML+=`
-<div class="product-admin">
-<b>${p.name}</b> • ₹${p.price}<br><br>
-<button onclick="editProduct(${i})">Edit</button>
-<button onclick="deleteProduct(${i})">Delete</button>
 </div>
 `;
 
 });
 
-saveAll();
 }
 
-/* SECRET LOGIN */
-function secretTap(){
-taps++;
-if(taps>=5){
-loginBox.classList.add("show");
-taps=0;
-}
-setTimeout(()=>{taps=0},2000);
-}
+function viewProduct(i){
 
-function login(){
-if(pass.value==="1234"){
-closeLogin();
-adminPanel.classList.add("show");
-}else{
-alert("Wrong Password");
-}
-}
-
-function closeLogin(){loginBox.classList.remove("show")}
-function closeAdmin(){adminPanel.classList.remove("show")}
-
-/* HERO */
-function saveHero(){
-settings.title=aTitle.value || settings.title;
-settings.desc=aDesc.value || settings.desc;
-loadSite();
-alert("Hero Updated");
-}
-
-/* NUMBER */
-function saveNumber(){
-settings.wa=waNum.value.trim();
-saveAll();
-alert("WhatsApp Updated");
-}
-
-/* ADD PRODUCT */
-function addProduct(){
-let n=pName.value.trim();
-let pr=pPrice.value.trim();
-let img=pImg.value.trim();
-
-if(!n||!pr||!img){alert("Fill all");return;}
-
-products.push({name:n,price:pr,img:img});
-renderProducts();
-
-pName.value="";
-pPrice.value="";
-pImg.value="";
-}
-
-/* DELETE */
-function deleteProduct(i){
-products.splice(i,1);
-renderProducts();
-}
-
-/* EDIT */
-function editProduct(i){
+current=i;
 let p=products[i];
 
-let n=prompt("Product Name",p.name);
-if(n===null)return;
+dImg.src=p.img;
+dName.innerText=p.name;
+dPrice.innerText="₹"+p.price;
+dFabric.innerText=p.fabric;
+dDesc.innerText=p.desc;
 
-let pr=prompt("Price",p.price);
-if(pr===null)return;
+dSizes.innerHTML="";
+p.sizes.split(",").forEach(s=>{
+dSizes.innerHTML += `<div class="size">${s}</div>`;
+});
 
-let img=prompt("Image URL",p.img);
-if(img===null)return;
+productBox.classList.add("show");
 
-products[i]={name:n,price:pr,img:img};
-renderProducts();
 }
 
-/* ORDER */
-function openOrder(n,p){
-selectedName=n;
-selectedPrice=p;
-orderLine.innerText=n+" • ₹"+p;
-orderBox.classList.add("show");
+function closeProduct(){
+productBox.classList.remove("show");
 }
 
-function closeOrder(){
-orderBox.classList.remove("show");
-}
+function buyNow(){
 
-function sendOrder(){
-let n=custName.value.trim();
-let p=custPhone.value.trim();
-let a=custAddress.value.trim();
-
-if(!n||!p||!a){alert("Fill all details");return;}
+let p=products[current];
 
 let msg=`Order
 
-Product: ${selectedName}
-Price: ₹${selectedPrice}
+Product: ${p.name}
+Price: ₹${p.price}
+Size: Select in chat`;
 
-Name: ${n}
-Phone: ${p}
-Address: ${a}`;
-
-window.open("https://wa.me/"+settings.wa+"?text="+encodeURIComponent(msg));
-closeOrder();
+window.open("https://wa.me/917736789255?text="+encodeURIComponent(msg));
 }
 
-/* SCROLL */
-function goProducts(){
-products.scrollIntoView;
-document.getElementById("products").scrollIntoView();
+/* ADMIN */
+
+function openAdmin(){
+
+let p=products[current];
+
+pName.value=p.name;
+pPrice.value=p.price;
+pImg.value=p.img;
+pFabric.value=p.fabric;
+pSizes.value=p.sizes;
+pDesc.value=p.desc;
+
+adminPanel.classList.add("show");
 }
 
-loadSite();
+function closeAdmin(){
+adminPanel.classList.remove("show");
+}
+
+function saveProduct(){
+
+products[current]={
+name:pName.value,
+price:pPrice.value,
+img:pImg.value,
+fabric:pFabric.value,
+sizes:pSizes.value,
+desc:pDesc.value
+};
+
+render();
+closeAdmin();
+alert("Updated");
+}
+
+render();
 </script>
 
 </body>
-  </html>
+</html>
