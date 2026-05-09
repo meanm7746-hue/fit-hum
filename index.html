@@ -8,7 +8,6 @@
 <style>
 body{margin:0;font-family:Arial;background:#f5f5f5;}
 
-/* HEADER */
 header{
 background:#111;
 color:white;
@@ -17,34 +16,18 @@ text-align:center;
 font-size:22px;
 }
 
-/* NAV */
 nav button{
-background:white;
-color:black;
-border:none;
-padding:8px 12px;
 margin:5px;
-border-radius:5px;
+padding:8px 10px;
+border:none;
+background:white;
 cursor:pointer;
+border-radius:5px;
 }
 
-/* SECTIONS */
 section{display:none;padding:15px;}
 .active{display:block;}
 
-/* HERO */
-.hero{
-height:250px;
-background:url('https://images.unsplash.com/photo-1521334884684-d80222895322') center/cover;
-display:flex;
-align-items:center;
-justify-content:center;
-color:white;
-font-size:28px;
-font-weight:bold;
-}
-
-/* GRID */
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
@@ -65,22 +48,28 @@ object-fit:cover;
 border-radius:8px;
 }
 
-button.buy{
+button{
+padding:8px;
+border:none;
 background:#111;
 color:white;
-border:none;
-padding:8px;
 border-radius:5px;
 cursor:pointer;
+margin:3px;
 }
 
-/* FORM */
 input,textarea{
 width:90%;
 padding:10px;
 margin:5px 0;
 }
 
+.adminBox{
+background:#fff;
+padding:10px;
+border-radius:10px;
+margin:10px 0;
+}
 </style>
 </head>
 
@@ -92,87 +81,106 @@ FIT HUB
 <nav>
 <button onclick="show('home')">Home</button>
 <button onclick="show('products')">Products</button>
-<button onclick="show('contact')">Order</button>
+<button onclick="show('order')">Order</button>
+<button onclick="loginAdmin()">Admin</button>
 </nav>
 
 </header>
 
 <!-- HOME -->
 <section id="home" class="active">
-<div class="hero">Premium Fashion Store</div>
-<h2 style="text-align:center;">Welcome to Fit Hub</h2>
-<p style="text-align:center;">Luxury Clothing Collection</p>
+<h2>Welcome to Fit Hub</h2>
+<p>Luxury Clothing Store</p>
 </section>
 
 <!-- PRODUCTS -->
 <section id="products">
+<h2>Products</h2>
+<div class="grid" id="list"></div>
 
-<h2>Our Products</h2>
-
-<div class="grid">
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf">
-<h3>Black Shirt</h3>
-<p>₹799</p>
-<button class="buy" onclick="order('Black Shirt',799)">Buy</button>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518">
-<h3>White Shirt</h3>
-<p>₹699</p>
-<button class="buy" onclick="order('White Shirt',699)">Buy</button>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1520975958225-0c7f5c0c1f2d">
-<h3>Hoodie</h3>
-<p>₹1299</p>
-<button class="buy" onclick="order('Hoodie',1299)">Buy</button>
-</div>
-
+<div class="adminBox" id="adminBox" style="display:none;">
+<h3>Admin Panel</h3>
+<input id="pname" placeholder="Product Name">
+<input id="pprice" placeholder="Price">
+<input id="pimg" placeholder="Image URL">
+<button onclick="addProduct()">Add Product</button>
 </div>
 
 </section>
 
 <!-- ORDER -->
-<section id="contact">
-
+<section id="order">
 <h2>Place Order</h2>
 
-<input type="text" id="name" placeholder="Name">
-<input type="text" id="phone" placeholder="Phone">
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
 <textarea id="address" placeholder="Address"></textarea>
 
-<button onclick="send()">Send Order</button>
+<select id="delivery">
+<option>Standard</option>
+<option>Bike Delivery</option>
+<option>Express Cycle</option>
+</select>
 
+<button onclick="sendOrder()">Send Order</button>
 </section>
 
 <script>
 
+let isAdmin=false;
+
+let products = JSON.parse(localStorage.getItem("products")) || [
+{name:"Black Shirt",price:799,img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf"},
+{name:"White Shirt",price:699,img:"https://images.unsplash.com/photo-1521572267360-ee0c2909d518"}
+];
+
 let selectedProduct="";
 let selectedPrice=0;
 
-/* PAGE SWITCH */
-function show(page){
+/* PAGE */
+function show(p){
 document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
-document.getElementById(page).classList.add("active");
+document.getElementById(p).classList.add("active");
 }
 
-/* SELECT PRODUCT */
-function order(name,price){
+/* LOAD PRODUCTS */
+function load(){
+let box=document.getElementById("list");
+box.innerHTML="";
+
+products.forEach((p,i)=>{
+box.innerHTML+=`
+<div class="card">
+<img src="${p.img}">
+<h3>${p.name}</h3>
+<p>₹${p.price}</p>
+
+<button onclick="buy('${p.name}',${p.price})">Buy</button>
+
+${isAdmin ? `
+<button onclick="edit(${i})">Edit</button>
+<button onclick="del(${i})">Delete</button>
+` : ""}
+</div>`;
+});
+
+localStorage.setItem("products",JSON.stringify(products));
+}
+
+/* BUY */
+function buy(name,price){
 selectedProduct=name;
 selectedPrice=price;
-show('contact');
+show('order');
 }
 
-/* WHATSAPP ORDER FIXED */
-function send(){
+/* ORDER */
+function sendOrder(){
 
 let name=document.getElementById("name").value;
 let phone=document.getElementById("phone").value;
 let address=document.getElementById("address").value;
+let delivery=document.getElementById("delivery").value;
 
 let msg =
 `Order:
@@ -180,15 +188,57 @@ Product: ${selectedProduct}
 Price: ₹${selectedPrice}
 Name: ${name}
 Phone: ${phone}
-Address: ${address}`;
+Address: ${address}
+Delivery: ${delivery}`;
 
-let number = "917736789255";
+let number="917736789255";
 
-let url = "https://wa.me/" + number + "?text=" + encodeURIComponent(msg);
-
-window.open(url, "_blank");
+window.open("https://wa.me/"+number+"?text="+encodeURIComponent(msg));
 
 }
+
+/* ADMIN LOGIN */
+function loginAdmin(){
+let pass=prompt("Enter Admin Password");
+
+if(pass==="1234"){
+isAdmin=true;
+document.getElementById("adminBox").style.display="block";
+alert("Admin Mode ON");
+load();
+}else{
+alert("Wrong Password");
+}
+}
+
+/* ADD */
+function addProduct(){
+let name=document.getElementById("pname").value;
+let price=document.getElementById("pprice").value;
+let img=document.getElementById("pimg").value;
+
+products.push({name,price,img});
+load();
+}
+
+/* EDIT */
+function edit(i){
+let name=prompt("Edit Name",products[i].name);
+let price=prompt("Edit Price",products[i].price);
+
+products[i].name=name;
+products[i].price=price;
+
+load();
+}
+
+/* DELETE */
+function del(i){
+products.splice(i,1);
+load();
+}
+
+load();
 
 </script>
 
