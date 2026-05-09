@@ -2,144 +2,29 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>FIT HUB V9 ENTERPRISE</title>
+<title>FIT HUB STORE</title>
+<link rel="stylesheet" href="style.css">
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-getFirestore, collection, addDoc, onSnapshot,
-deleteDoc, doc, updateDoc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-import {
-getStorage, ref, uploadBytes, getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
-
-/* 🔥 FIREBASE CONFIG */
-const firebaseConfig = {
-apiKey: "YOUR_KEY",
-authDomain: "YOUR_DOMAIN",
-projectId: "YOUR_ID",
-storageBucket: "YOUR_BUCKET",
-appId: "YOUR_APP"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const storage = getStorage(app);
-
-/* =========================
-   ADMIN CONTROL (NO LOGIN)
-========================= */
-let adminMode = false;
-
-window.openAdmin = function(){
-let code = prompt("Enter Admin Code:");
-if(code === "@yadh4u1"){
-adminMode = true;
-alert("Admin Mode ON");
-document.getElementById("adminPanel").style.display="block";
-}
-}
-
-/* =========================
-   ADD PRODUCT (CLOUD)
-========================= */
-window.addProduct = async function(){
-
-let file = document.getElementById("img").files[0];
-
-let storageRef = ref(storage, "products/"+file.name);
-await uploadBytes(storageRef, file);
-let url = await getDownloadURL(storageRef);
-
-await addDoc(collection(db,"products"),{
-name: name.value,
-price: price.value,
-cat: cat.value,
-img: url,
-time: Date.now(),
-status:"active"
-});
-
-alert("Product Added 🚀");
-}
-
-/* =========================
-   LIVE PRODUCTS
-========================= */
-onSnapshot(collection(db,"products"),(snap)=>{
-let grid = document.getElementById("grid");
-grid.innerHTML="";
-
-snap.forEach(d=>{
-let p=d.data();
-
-grid.innerHTML+=`
-<div class="card">
-<img src="${p.img}">
-<h3>${p.name}</h3>
-<p>₹${p.price}</p>
-
-<button onclick="deleteProduct('${d.id}')">Delete</button>
-<button onclick="editProduct('${d.id}')">Edit</button>
-</div>`;
-});
-});
-
-/* =========================
-   DELETE PRODUCT
-========================= */
-window.deleteProduct = async function(id){
-if(confirm("Delete product?")){
-await deleteDoc(doc(db,"products",id));
-}
-}
-
-/* =========================
-   UPDATE PRODUCT (SIMPLE)
-========================= */
-window.editProduct = async function(id){
-let newPrice = prompt("New Price:");
-await updateDoc(doc(db,"products",id),{
-price:newPrice
-});
-}
-
-</script>
-
-<style>
-body{font-family:Arial;background:#0b0b10;color:#fff;margin:0}
-header{padding:15px;background:#111;display:flex;justify-content:space-between}
-.logo{color:#9d4edd;font-size:22px;cursor:pointer}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;padding:15px}
-.card{background:#1a1a22;padding:10px;border-radius:12px}
-.card img{width:100%;height:180px;object-fit:cover}
-button{padding:8px;margin:5px;background:#9d4edd;border:none;color:#fff;border-radius:8px}
-.panel{display:none;padding:15px}
-</style>
+<script type="module" src="app.js"></script>
 </head>
 
 <body>
 
 <header>
-<div class="logo" onclick="openAdmin()">FIT HUB V9</div>
+<h2>FIT HUB STORE</h2>
 </header>
 
-<div id="adminPanel" class="panel">
-
-<h2>Admin Panel</h2>
+<div class="panel">
+<h3>Add Product (Admin)</h3>
 
 <input id="name" placeholder="Name">
 <input id="price" placeholder="Price">
-<input id="cat" placeholder="Category">
-<input type="file" id="img">
+<input id="img" placeholder="Image URL">
 
-<button onclick="addProduct()">Add Product</button>
-
+<button onclick="addProduct()">Add</button>
 </div>
 
-<div class="grid" id="grid"></div>
+<div id="grid" class="grid"></div>
 
 </body>
 </html>
