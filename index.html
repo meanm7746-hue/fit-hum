@@ -6,128 +6,192 @@
 <title>Fit Hub</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
 body{
 font-family:Arial,Helvetica,sans-serif;
-background:#f5f5f6;
-color:#222;
+background:#0f0f10;
+color:#fff;
 }
 
 /* HEADER */
 header{
-height:70px;
-background:#fff;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:0 25px;
-box-shadow:0 2px 10px rgba(0,0,0,.08);
-position:sticky;
+position:fixed;
 top:0;
+left:0;
+right:0;
+height:72px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 25px;
+background:rgba(0,0,0,.55);
+backdrop-filter:blur(12px);
 z-index:100;
+border-bottom:1px solid rgba(255,255,255,.08);
 }
 
 .logo{
-font-size:24px;
-font-weight:700;
-letter-spacing:1px;
-}
-
-.nav{
-display:flex;
-gap:12px;
-align-items:center;
+font-size:28px;
+font-weight:800;
+letter-spacing:2px;
+background:linear-gradient(90deg,#ff3f6c,#ff8a00);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
 .nav button{
-padding:10px 14px;
+padding:10px 16px;
 border:none;
-border-radius:8px;
-cursor:pointer;
-background:#ff3f6c;
+border-radius:12px;
+background:linear-gradient(135deg,#ff3f6c,#ff8a00);
 color:#fff;
-font-weight:600;
+font-weight:700;
+cursor:pointer;
+box-shadow:0 8px 18px rgba(255,63,108,.35);
 }
 
 /* HERO */
 .hero{
-margin:18px;
-height:260px;
-border-radius:18px;
-background:linear-gradient(135deg,#111,#333);
-color:#fff;
+margin:95px 18px 20px;
+height:420px;
+border-radius:28px;
+position:relative;
+overflow:hidden;
+background:
+linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.45)),
+url('https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1400&q=80') center/cover;
 display:flex;
-flex-direction:column;
-justify-content:center;
-padding:30px;
+align-items:flex-end;
+padding:35px;
+box-shadow:0 20px 50px rgba(0,0,0,.45);
+}
+
+.hero::after{
+content:"";
+position:absolute;
+inset:0;
+background:linear-gradient(120deg,rgba(255,63,108,.18),rgba(255,138,0,.10));
+}
+
+.hero-content{
+position:relative;
+z-index:2;
+max-width:520px;
 }
 
 .hero h1{
-font-size:34px;
-margin-bottom:10px;
+font-size:48px;
+line-height:1.1;
+margin-bottom:14px;
 }
 
 .hero p{
-font-size:16px;
-opacity:.9;
+font-size:17px;
+opacity:.95;
+margin-bottom:18px;
+line-height:1.5;
 }
 
-/* SECTION TITLE */
-.title{
-padding:0 18px 10px;
-font-size:22px;
+.hero .cta{
+padding:13px 20px;
+border:none;
+border-radius:14px;
+background:linear-gradient(135deg,#ff3f6c,#ff8a00);
+color:#fff;
 font-weight:700;
+cursor:pointer;
+box-shadow:0 10px 25px rgba(255,63,108,.35);
 }
 
-/* PRODUCTS */
-.grid{
+/* BANNERS */
+.ribbon{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:14px;
+padding:0 18px 18px;
+}
+
+.ribbon-box{
+background:linear-gradient(135deg,#1f1f22,#171719);
+border:1px solid rgba(255,255,255,.06);
+padding:18px;
+border-radius:22px;
+box-shadow:0 10px 25px rgba(0,0,0,.25);
+}
+
+.ribbon-box h3{
+font-size:18px;
+margin-bottom:8px;
+}
+
+.ribbon-box p{
+font-size:14px;
+opacity:.8;
+}
+
+/* TITLE */
+.title{
+padding:6px 18px 14px;
+font-size:28px;
+font-weight:800;
+}
+
+/* GRID */
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
 gap:18px;
-padding:0 18px 25px;
+padding:0 18px 35px;
 }
 
 .card{
-background:#fff;
-border-radius:16px;
+background:linear-gradient(180deg,#1b1b1e,#121214);
+border-radius:24px;
 overflow:hidden;
-box-shadow:0 4px 18px rgba(0,0,0,.08);
-transition:.2s;
+box-shadow:0 15px 35px rgba(0,0,0,.35);
+border:1px solid rgba(255,255,255,.06);
+transition:.25s;
 }
 
 .card:hover{
-transform:translateY(-6px);
+transform:translateY(-8px) scale(1.01);
 }
 
 .card img{
 width:100%;
-height:230px;
+height:280px;
 object-fit:cover;
 }
 
 .card-body{
-padding:12px;
+padding:15px;
 }
 
 .card h3{
 font-size:18px;
-margin-bottom:6px;
+margin-bottom:8px;
 }
 
 .price{
-color:#0a8a39;
-font-weight:700;
-margin-bottom:10px;
+font-size:20px;
+font-weight:800;
+color:#6dff9b;
+margin-bottom:12px;
 }
 
-.buy-btn{
+.buy{
 width:100%;
-padding:10px;
+padding:12px;
 border:none;
-border-radius:10px;
-background:#ff3f6c;
+border-radius:14px;
+background:linear-gradient(135deg,#ff3f6c,#ff8a00);
 color:#fff;
-font-weight:700;
+font-weight:800;
 cursor:pointer;
 }
 
@@ -135,82 +199,93 @@ cursor:pointer;
 .overlay{
 position:fixed;
 inset:0;
-background:rgba(0,0,0,.45);
+background:rgba(0,0,0,.65);
 display:none;
-z-index:200;
-}
-
-.drawer{
-position:fixed;
-top:0;
-right:-360px;
-width:340px;
-height:100%;
-background:#fff;
-z-index:300;
-box-shadow:-5px 0 20px rgba(0,0,0,.15);
-transition:.3s;
-padding:18px;
-overflow:auto;
-}
-
-.drawer.open{
-right:0;
+z-index:150;
 }
 
 .overlay.show{
 display:block;
 }
 
+.drawer{
+position:fixed;
+top:0;
+right:-380px;
+width:360px;
+height:100%;
+background:#141416;
+z-index:200;
+padding:20px;
+overflow:auto;
+transition:.3s;
+box-shadow:-15px 0 40px rgba(0,0,0,.45);
+border-left:1px solid rgba(255,255,255,.06);
+}
+
+.drawer.open{
+right:0;
+}
+
 .drawer h2{
 margin-bottom:12px;
+font-size:24px;
 }
 
 .drawer p{
 font-size:14px;
+opacity:.8;
+margin-bottom:14px;
 line-height:1.5;
-margin-bottom:15px;
-color:#555;
 }
 
 .drawer input,
 .drawer textarea{
 width:100%;
-padding:10px;
+padding:12px;
 margin-bottom:10px;
-border:1px solid #ddd;
-border-radius:10px;
-font-size:14px;
+border:none;
+border-radius:14px;
+background:#202024;
+color:#fff;
 }
 
 .drawer textarea{
-height:90px;
+height:95px;
 resize:none;
 }
 
 .drawer button{
 width:100%;
-padding:11px;
+padding:12px;
 border:none;
-border-radius:10px;
-background:#111;
+border-radius:14px;
+background:linear-gradient(135deg,#ff3f6c,#ff8a00);
 color:#fff;
-font-weight:700;
+font-weight:800;
 cursor:pointer;
 margin-bottom:10px;
 }
 
 .small{
 font-size:12px;
-color:#666;
+opacity:.65;
 margin-top:8px;
 }
 
 /* MOBILE */
 @media(max-width:700px){
-.hero{height:220px}
-.hero h1{font-size:28px}
-.drawer{width:100%;right:-100%}
+.hero{
+height:360px;
+padding:20px;
+}
+.hero h1{
+font-size:34px;
+}
+.drawer{
+width:100%;
+right:-100%;
+}
 }
 </style>
 </head>
@@ -218,35 +293,52 @@ margin-top:8px;
 
 <header>
 <div class="logo">FIT HUB</div>
-
 <div class="nav">
-<button onclick="openDrawer()">About</button>
+<button onclick="openDrawer()">MENU</button>
 </div>
 </header>
 
 <section class="hero">
-<h1 id="heroTitle">Premium Fashion Store</h1>
-<p id="heroDesc">Modern style, comfort and confidence.</p>
+<div class="hero-content">
+<h1 id="heroTitle">LEVEL UP YOUR STYLE</h1>
+<p id="heroDesc">Luxury streetwear, premium essentials and bold fashion for everyday confidence.</p>
+<button class="cta">SHOP NOW</button>
+</div>
 </section>
 
-<div class="title">Trending Products</div>
+<section class="ribbon">
+<div class="ribbon-box">
+<h3>🔥 New Drops</h3>
+<p>Fresh arrivals every week</p>
+</div>
+
+<div class="ribbon-box">
+<h3>⚡ Fast Delivery</h3>
+<p>Quick shipping across India</p>
+</div>
+
+<div class="ribbon-box">
+<h3>💎 Premium Quality</h3>
+<p>Comfort + style combined</p>
+</div>
+</section>
+
+<div class="title">TRENDING NOW</div>
 
 <section class="grid" id="productsGrid"></section>
 
-<!-- Overlay -->
 <div class="overlay" id="overlay" onclick="closeDrawer()"></div>
 
-<!-- Drawer -->
 <div class="drawer" id="drawer">
 
 <h2>About Fit Hub</h2>
 <p id="aboutText">
-Fit Hub is a premium clothing destination with modern fashion essentials.
+Fit Hub is a bold fashion destination for premium modern streetwear.
 </p>
 
-<hr style="margin:15px 0">
+<hr style="border-color:#2b2b2f;margin:15px 0">
 
-<h2>Edit Website</h2>
+<h2>Edit Content</h2>
 
 <input id="editHeroTitle" placeholder="Hero Title">
 <textarea id="editHeroDesc" placeholder="Hero Description"></textarea>
@@ -254,7 +346,7 @@ Fit Hub is a premium clothing destination with modern fashion essentials.
 
 <button onclick="saveContent()">Save Content</button>
 
-<hr style="margin:15px 0">
+<hr style="border-color:#2b2b2f;margin:15px 0">
 
 <h2>Add Product</h2>
 
@@ -264,90 +356,75 @@ Fit Hub is a premium clothing destination with modern fashion essentials.
 
 <button onclick="addProduct()">Add Product</button>
 
-<p class="small">All edits save in your browser instantly.</p>
+<p class="small">Changes save instantly in browser</p>
 
 </div>
 
 <script>
-/* STORAGE KEYS */
-const contentKey = "fithub_content";
-const productKey = "fithub_products";
+const contentKey="fithub_content_pro";
+const productKey="fithub_products_pro";
 
-/* DEFAULT PRODUCTS */
-let products = JSON.parse(localStorage.getItem(productKey)) || [
+let products=JSON.parse(localStorage.getItem(productKey))||[
 {
-name:"Black Shirt",
+name:"Black Luxe Shirt",
 price:"799",
-img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf"
+img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=900&q=80"
 },
 {
-name:"White Shirt",
+name:"Urban White Tee",
 price:"699",
-img:"https://images.unsplash.com/photo-1521572267360-ee0c2909d518"
+img:"https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80"
 },
 {
 name:"Premium Hoodie",
 price:"1299",
-img:"https://images.unsplash.com/photo-1520975958225-0c7f5c0c1f2d"
+img:"https://images.unsplash.com/photo-1520975958225-0c7f5c0c1f2d?auto=format&fit=crop&w=900&q=80"
 }
 ];
 
-/* LOAD CONTENT */
 function loadContent(){
-let saved = JSON.parse(localStorage.getItem(contentKey));
-
+let saved=JSON.parse(localStorage.getItem(contentKey));
 if(saved){
-document.getElementById("heroTitle").innerText = saved.heroTitle;
-document.getElementById("heroDesc").innerText = saved.heroDesc;
-document.getElementById("aboutText").innerText = saved.about;
+heroTitle.innerText=saved.heroTitle;
+heroDesc.innerText=saved.heroDesc;
+aboutText.innerText=saved.about;
 }
 }
 
-/* SAVE CONTENT */
 function saveContent(){
-
-let data = {
-heroTitle:document.getElementById("editHeroTitle").value || "Premium Fashion Store",
-heroDesc:document.getElementById("editHeroDesc").value || "Modern style, comfort and confidence.",
-about:document.getElementById("editAbout").value || "Fit Hub premium store."
+let data={
+heroTitle:editHeroTitle.value||"LEVEL UP YOUR STYLE",
+heroDesc:editHeroDesc.value||"Luxury streetwear and premium essentials.",
+about:editAbout.value||"Fit Hub premium store."
 };
-
 localStorage.setItem(contentKey,JSON.stringify(data));
 loadContent();
-alert("Updated Successfully");
+alert("Updated");
 }
 
-/* RENDER PRODUCTS */
 function renderProducts(){
-let box = document.getElementById("productsGrid");
-box.innerHTML = "";
-
-products.forEach((p,i)=>{
-
-box.innerHTML += `
+productsGrid.innerHTML="";
+products.forEach(p=>{
+productsGrid.innerHTML+=`
 <div class="card">
 <img src="${p.img}">
 <div class="card-body">
 <h3>${p.name}</h3>
 <div class="price">₹${p.price}</div>
-<button class="buy-btn" onclick="buyNow('${p.name}','${p.price}')">Buy Now</button>
+<button class="buy" onclick="buyNow('${p.name}','${p.price}')">BUY NOW</button>
 </div>
 </div>
 `;
-
 });
-
 localStorage.setItem(productKey,JSON.stringify(products));
 }
 
-/* ADD PRODUCT */
 function addProduct(){
+let name=pname.value;
+let price=pprice.value;
+let img=pimg.value;
 
-let name = document.getElementById("pname").value;
-let price = document.getElementById("pprice").value;
-let img = document.getElementById("pimg").value;
-
-if(!name || !price || !img){
+if(!name||!price||!img){
 alert("Fill all fields");
 return;
 }
@@ -355,20 +432,16 @@ return;
 products.push({name,price,img});
 renderProducts();
 
-document.getElementById("pname").value="";
-document.getElementById("pprice").value="";
-document.getElementById("pimg").value="";
-
-alert("Product Added");
+pname.value="";
+pprice.value="";
+pimg.value="";
 }
 
-/* BUY */
 function buyNow(name,price){
+let phone=prompt("Phone Number");
+let address=prompt("Address");
 
-let phone = prompt("Phone Number");
-let address = prompt("Address");
-
-let msg = `Order:
+let msg=`Order:
 Product: ${name}
 Price: ₹${price}
 Phone: ${phone}
@@ -377,21 +450,19 @@ Address: ${address}`;
 window.open("https://wa.me/917736789255?text="+encodeURIComponent(msg));
 }
 
-/* DRAWER */
 function openDrawer(){
-document.getElementById("drawer").classList.add("open");
-document.getElementById("overlay").classList.add("show");
+drawer.classList.add("open");
+overlay.classList.add("show");
 }
 
 function closeDrawer(){
-document.getElementById("drawer").classList.remove("open");
-document.getElementById("overlay").classList.remove("show");
+drawer.classList.remove("open");
+overlay.classList.remove("show");
 }
 
-/* INIT */
 loadContent();
 renderProducts();
 </script>
 
 </body>
-</html>
+  </html>
