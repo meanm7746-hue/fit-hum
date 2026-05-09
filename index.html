@@ -20,12 +20,12 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 padding:16px 20px;
-background:rgba(10,10,15,.85);
-backdrop-filter:blur(12px);
+background:rgba(10,10,15,.88);
+backdrop-filter:blur(14px);
 border-bottom:1px solid rgba(255,255,255,.06);
 }
 .logo{
-font-size:28px;
+font-size:30px;
 font-weight:900;
 letter-spacing:2px;
 cursor:pointer;
@@ -38,88 +38,90 @@ border:none;
 border-radius:12px;
 cursor:pointer;
 font-weight:700;
-background:#9d4edd;
+background:linear-gradient(135deg,#7b2ff7,#9d4edd);
 color:#fff;
-box-shadow:0 0 14px rgba(157,78,221,.5);
+box-shadow:0 0 14px rgba(157,78,221,.45);
 }
 .hero{
-padding:60px 20px;
+padding:70px 20px;
 text-align:center;
-background:linear-gradient(135deg,#09090d,#111122);
+background:linear-gradient(135deg,#09090d,#121226);
 }
 .hero h1{
-font-size:42px;
-margin-bottom:10px;
+font-size:44px;
+margin-bottom:12px;
 }
 .hero p{
-opacity:.8;
-margin-bottom:18px;
+opacity:.82;
+margin-bottom:20px;
 }
 .wrap{
-padding:20px;
 max-width:1200px;
 margin:auto;
+padding:22px;
 }
-.topbar{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
+.searchbar{
 margin-bottom:20px;
 }
 input{
-padding:12px;
+width:100%;
+padding:14px;
 border:none;
-border-radius:12px;
-background:#17171f;
+border-radius:14px;
+background:#15151e;
 color:#fff;
-flex:1;
-min-width:220px;
+font-size:15px;
 }
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
 gap:18px;
 }
 .card{
 background:#121218;
 border:1px solid rgba(255,255,255,.05);
-border-radius:18px;
-padding:14px;
-transition:.2s;
+border-radius:20px;
+overflow:hidden;
+transition:.25s;
 }
 .card:hover{
-transform:translateY(-4px);
-box-shadow:0 0 18px rgba(157,78,221,.22);
+transform:translateY(-6px);
+box-shadow:0 0 22px rgba(157,78,221,.2);
 }
 .img{
-height:220px;
-border-radius:14px;
-background:linear-gradient(135deg,#1f1f2e,#292940);
+height:240px;
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:42px;
-margin-bottom:12px;
+font-size:52px;
+background:linear-gradient(135deg,#1b1b2a,#2a2a40);
+}
+.info{
+padding:16px;
+}
+.info h3{
+font-size:20px;
+margin-bottom:8px;
 }
 .price{
-font-size:22px;
+font-size:24px;
 font-weight:900;
 color:#c77dff;
-margin:8px 0;
+margin-bottom:12px;
 }
 .row{
 display:flex;
-gap:8px;
-margin-top:10px;
+gap:10px;
 }
 .small{
 flex:1;
-padding:10px;
+padding:11px;
 border:none;
-border-radius:10px;
+border-radius:12px;
 cursor:pointer;
-background:#1c1c25;
+background:#1d1d29;
 color:#fff;
+font-weight:700;
 }
 .admin{
 position:fixed;
@@ -127,10 +129,10 @@ top:0;
 right:-420px;
 width:390px;
 height:100%;
-background:#0e0e14;
-padding:18px;
+background:#0d0d13;
+padding:20px;
 transition:.3s;
-z-index:3000;
+z-index:4000;
 overflow:auto;
 border-left:1px solid rgba(255,255,255,.05);
 }
@@ -140,13 +142,13 @@ margin-bottom:14px;
 color:#c77dff;
 }
 .admin input{
-width:100%;
 margin-bottom:10px;
 }
-.notice{
+.note{
 font-size:12px;
 opacity:.65;
 margin-top:8px;
+line-height:1.5;
 }
 footer{
 padding:30px;
@@ -164,50 +166,58 @@ opacity:.6;
 
 <section class="hero">
 <h1>Dark Luxury Neon Fashion</h1>
-<p>Premium men fashion store built for style.</p>
-<button class="btn" onclick="window.scrollTo({top:500,behavior:'smooth'})">Shop Now</button>
+<p>Premium men fashion collection for elite style.</p>
+<button class="btn" onclick="window.scrollTo({top:500,behavior:'smooth'})">Explore</button>
 </section>
 
 <div class="wrap">
-<div class="topbar">
+<div class="searchbar">
 <input id="search" placeholder="Search products..." oninput="renderProducts()">
 </div>
 
 <div class="grid" id="grid"></div>
 </div>
 
+<!-- Hidden Admin -->
 <div class="admin" id="adminPanel">
 <h2>Admin Dashboard</h2>
 
 <input id="pname" placeholder="Product Name">
 <input id="pprice" placeholder="Price">
-<input id="picon" placeholder="Emoji / Text (👕)">
+<input id="picon" placeholder="Emoji / Icon (👕)">
 <button class="btn" style="width:100%" onclick="addProduct()">Add Product</button>
 
-<div class="notice">Tap FIT HUB logo 5 times to open admin.<br>Password: your custom password.</div>
+<p class="note">
+Tap FIT HUB logo 5 times to open admin panel.
+</p>
 
-<button class="small" style="margin-top:14px;width:100%" onclick="closeAdmin()">Close</button>
+<button class="small" style="width:100%;margin-top:12px" onclick="closeAdmin()">Close</button>
 </div>
 
 <footer>© FIT HUB 2026</footer>
 
 <script>
-let password="@yadh4u1";
+let adminPassword="@yadh4u1";
 let taps=0;
 
-let products=JSON.parse(localStorage.getItem("fithub_products")||"[]");
-if(products.length===0){
-products=[];
-saveProducts();
-}
+let products=JSON.parse(localStorage.getItem("fithub_store")||"[]");
 
 let cart=[];
+
+if(products.length===0){
+products=[
+{id:1,name:"Royal Black Shirt",price:"799",icon:"👕"},
+{id:2,name:"Urban White Tee",price:"699",icon:"👔"},
+{id:3,name:"Classic Hoodie",price:"1199",icon:"🧥"}
+];
+saveProducts();
+}
 
 document.getElementById("logo").onclick=()=>{
 taps++;
 if(taps>=5){
-let p=prompt("Enter Admin Password");
-if(p===password){
+let p=prompt("Enter Password");
+if(p===adminPassword){
 document.getElementById("adminPanel").classList.add("show");
 }else{
 alert("Wrong Password");
@@ -217,16 +227,16 @@ taps=0;
 };
 
 function saveProducts(){
-localStorage.setItem("fithub_products",JSON.stringify(products));
+localStorage.setItem("fithub_store",JSON.stringify(products));
 }
 
 function addProduct(){
-let name=document.getElementById("pname").value.trim();
-let price=document.getElementById("pprice").value.trim();
-let icon=document.getElementById("picon").value.trim() || "👕";
+let name=pname.value.trim();
+let price=pprice.value.trim();
+let icon=picon.value.trim() || "👕";
 
 if(!name || !price){
-alert("Enter name & price");
+alert("Enter product details");
 return;
 }
 
@@ -245,49 +255,36 @@ pprice.value="";
 picon.value="";
 }
 
-function deleteProduct(id){
-products=products.filter(p=>p.id!==id);
-saveProducts();
-renderProducts();
-}
-
-function addCart(id){
-cart.push(id);
-document.getElementById("cartCount").innerText=cart.length;
-}
-
-function showCart(){
-alert("Items in cart: "+cart.length);
-}
-
 function renderProducts(){
-let q=document.getElementById("search").value.toLowerCase();
-let grid=document.getElementById("grid");
+let q=search.value.toLowerCase();
 grid.innerHTML="";
 
-let filtered=products.filter(p=>p.name.toLowerCase().includes(q));
+let list=products.filter(p=>p.name.toLowerCase().includes(q));
 
-if(filtered.length===0){
-grid.innerHTML="<p>No products yet. Add from admin panel.</p>";
-return;
-}
-
-filtered.forEach(p=>{
+list.forEach(p=>{
 grid.innerHTML+=`
 <div class="card">
 <div class="img">${p.icon}</div>
+<div class="info">
 <h3>${p.name}</h3>
 <div class="price">₹${p.price}</div>
 <div class="row">
 <button class="small" onclick="addCart(${p.id})">Add Cart</button>
-<button class="small" onclick="buyNow('${p.name}','${p.price}')">Buy</button>
+<button class="small" onclick="buyNow('${p.name}','${p.price}')">Buy Now</button>
 </div>
-<div class="row">
-<button class="small" onclick="deleteProduct(${p.id})">Delete</button>
 </div>
 </div>
 `;
 });
+}
+
+function addCart(id){
+cart.push(id);
+cartCount.innerText=cart.length;
+}
+
+function showCart(){
+alert("Cart Items: "+cart.length);
 }
 
 function buyNow(name,price){
@@ -296,7 +293,7 @@ window.open("https://wa.me/917736789255?text="+msg,"_blank");
 }
 
 function closeAdmin(){
-document.getElementById("adminPanel").classList.remove("show");
+adminPanel.classList.remove("show");
 }
 
 renderProducts();
