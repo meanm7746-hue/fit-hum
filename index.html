@@ -8,143 +8,119 @@
 <style>
 body{
 margin:0;
-font-family:system-ui, Arial;
+font-family:system-ui;
 background:#f7f7f7;
 }
 
-/* TOP NAV */
+/* TOP BAR */
 .topbar{
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:15px 25px;
+padding:15px 20px;
 background:white;
-box-shadow:0 2px 12px rgba(0,0,0,0.08);
+box-shadow:0 2px 10px rgba(0,0,0,0.08);
 position:sticky;
 top:0;
-z-index:10;
 }
 
-.logo{
-font-size:22px;
-font-weight:700;
-letter-spacing:1px;
-}
+.logo{font-weight:700;font-size:20px}
 
-.search{
-width:40%;
-padding:10px;
-border:1px solid #ddd;
-border-radius:8px;
-}
-
-/* HERO */
-.hero{
-margin:15px;
-height:250px;
-border-radius:15px;
-background:linear-gradient(120deg,#111,#444);
+.btn{
+background:#ff3f6c;
 color:white;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:28px;
-font-weight:600;
-}
-
-/* CATEGORY */
-.catbar{
-display:flex;
-gap:10px;
-padding:10px 15px;
-overflow-x:auto;
-}
-
-.cat{
-background:white;
-padding:10px 16px;
-border-radius:25px;
-box-shadow:0 2px 8px rgba(0,0,0,0.05);
-white-space:nowrap;
-font-size:14px;
+border:none;
+padding:8px 12px;
+border-radius:6px;
+cursor:pointer;
 }
 
 /* PRODUCTS */
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:18px;
+gap:15px;
 padding:15px;
 }
 
 .card{
 background:white;
-border-radius:14px;
+border-radius:12px;
 overflow:hidden;
-box-shadow:0 4px 15px rgba(0,0,0,0.08);
-transition:0.25s;
-}
-
-.card:hover{
-transform:translateY(-6px);
+box-shadow:0 3px 12px rgba(0,0,0,0.08);
+text-align:center;
 }
 
 .card img{
 width:100%;
-height:220px;
+height:200px;
 object-fit:cover;
 }
 
-.card h3{
-margin:10px;
-font-size:16px;
+/* DRAWER */
+.drawer{
+position:fixed;
+top:0;
+right:-320px;
+width:300px;
+height:100%;
+background:white;
+box-shadow:-5px 0 20px rgba(0,0,0,0.2);
+padding:15px;
+transition:0.3s;
+z-index:100;
 }
 
-.price{
-margin:0 10px;
-color:#1a7f37;
-font-weight:600;
+.drawer.open{
+right:0;
 }
 
-.btn{
-width:90%;
-margin:10px 5%;
+.overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.4);
+display:none;
+z-index:99;
+}
+
+.overlay.show{
+display:block;
+}
+
+/* EDIT SECTION */
+input{
+width:100%;
+padding:8px;
+margin:5px 0;
+border:1px solid #ddd;
+border-radius:6px;
+}
+
+.save{
+width:100%;
+background:#111;
+color:white;
 padding:10px;
 border:none;
-background:#ff3f6c;
-color:white;
-border-radius:8px;
+border-radius:6px;
 cursor:pointer;
-font-weight:600;
-}
-
-.btn:hover{
-background:#e6325f;
+margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
+<!-- TOP BAR -->
 <div class="topbar">
 <div class="logo">FIT HUB</div>
-<input class="search" placeholder="Search products, brands...">
-</div>
 
-<!-- HERO -->
-<div class="hero">
-Premium Fashion Collection
+<div>
+<button class="btn" onclick="openDrawer()">About</button>
 </div>
-
-<!-- CATEGORIES -->
-<div class="catbar">
-<div class="cat">Men</div>
-<div class="cat">Women</div>
-<div class="cat">T-Shirts</div>
-<div class="cat">Hoodies</div>
-<div class="cat">Jeans</div>
-<div class="cat">New Arrivals</div>
 </div>
 
 <!-- PRODUCTS -->
@@ -153,40 +129,55 @@ Premium Fashion Collection
 <div class="card">
 <img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf">
 <h3>Black Shirt</h3>
-<p class="price">₹799</p>
-<button class="btn" onclick="buy('Black Shirt',799)">BUY NOW</button>
+<p>₹799</p>
+<button class="btn">Buy</button>
 </div>
 
-<div class="card">
-<img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518">
-<h3>White Shirt</h3>
-<p class="price">₹699</p>
-<button class="btn" onclick="buy('White Shirt',699)">BUY NOW</button>
 </div>
 
-<div class="card">
-<img src="https://images.unsplash.com/photo-1520975958225-0c7f5c0c1f2d">
-<h3>Premium Hoodie</h3>
-<p class="price">₹1299</p>
-<button class="btn" onclick="buy('Hoodie',1299)">BUY NOW</button>
-</div>
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+
+<!-- DRAWER -->
+<div class="drawer" id="drawer">
+
+<h3>About Fit Hub</h3>
+<p style="font-size:14px;color:#555">
+Premium fashion store built for modern style.
+</p>
+
+<hr>
+
+<h3>Edit Panel</h3>
+
+<input id="name" placeholder="Edit Title">
+<input id="desc" placeholder="Description">
+
+<button class="save" onclick="save()">Save Changes</button>
 
 </div>
 
 <script>
-function buy(name,price){
 
-let phone=prompt("Phone Number");
-let address=prompt("Address");
-
-let msg=`🛍 Order:
-Product: ${name}
-Price: ₹${price}
-Phone: ${phone}
-Address: ${address}`;
-
-window.open("https://wa.me/917736789255?text="+encodeURIComponent(msg));
+function openDrawer(){
+document.getElementById("drawer").classList.add("open");
+document.getElementById("overlay").classList.add("show");
 }
+
+function closeDrawer(){
+document.getElementById("drawer").classList.remove("open");
+document.getElementById("overlay").classList.remove("show");
+}
+
+/* SIMPLE EDIT SAVE (demo) */
+function save(){
+let name=document.getElementById("name").value;
+let desc=document.getElementById("desc").value;
+
+alert("Saved:\n"+name+"\n"+desc);
+closeDrawer();
+}
+
 </script>
 
 </body>
