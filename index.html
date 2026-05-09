@@ -6,40 +6,126 @@
 <title>Fit Hub</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#f5f5f5;}
-header{background:#111;color:white;padding:15px;text-align:center;}
-section{padding:15px;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;}
-.card{background:white;padding:10px;border-radius:10px;text-align:center;}
-.card img{width:100%;height:180px;object-fit:cover;border-radius:8px;}
-button{background:#111;color:white;padding:8px;border:none;border-radius:5px;cursor:pointer;margin:3px;}
-input,textarea{width:90%;padding:10px;margin:5px 0;}
+body{
+margin:0;
+font-family:Arial;
+display:flex;
+background:#f5f5f5;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:260px;
+background:#111;
+color:white;
+height:100vh;
+padding:15px;
+box-sizing:border-box;
+}
+
+.sidebar h2{
+margin-top:0;
+}
+
+.sidebar input{
+width:100%;
+padding:8px;
+margin:5px 0;
+border:none;
+border-radius:5px;
+}
+
+.sidebar button{
+width:100%;
+padding:10px;
+background:#ff3f6c;
+border:none;
+color:white;
+border-radius:5px;
+cursor:pointer;
+margin-top:10px;
+}
+
+/* MAIN */
+.main{
+flex:1;
+padding:15px;
+}
+
+header{
+background:white;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+font-size:22px;
+font-weight:bold;
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* PRODUCTS */
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
+}
+
+.card{
+background:white;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+.card img{
+width:100%;
+height:180px;
+object-fit:cover;
+}
+
+.price{
+color:green;
+font-weight:bold;
+}
+
+button.buy{
+background:#ff3f6c;
+color:white;
+border:none;
+padding:8px;
+width:90%;
+margin-bottom:10px;
+border-radius:5px;
+cursor:pointer;
+}
 </style>
 </head>
 
 <body>
 
-<header>FIT HUB</header>
+<!-- SIDEBAR EDIT PANEL -->
+<div class="sidebar">
 
-<section>
+<h2>Edit Panel</h2>
 
-<h3>Admin Login</h3>
-<button onclick="login()">Admin Mode</button>
-
-<div id="adminPanel" style="display:none;">
-<h3>Add Product</h3>
 <input id="pname" placeholder="Product Name">
 <input id="pprice" placeholder="Price">
 <input id="pimg" placeholder="Image URL">
+
 <button onclick="add()">Add Product</button>
+
 </div>
 
-<h3>Products</h3>
+<!-- MAIN AREA -->
+<div class="main">
+
+<header>FIT HUB - Premium Fashion Store</header>
+
 <div class="grid" id="list"></div>
 
-</section>
+</div>
 
-<!-- Firebase -->
+<!-- FIREBASE -->
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -59,9 +145,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let isAdmin=false;
-
-/* LOAD PRODUCTS (REALTIME AUTO SYNC) */
+/* LOAD PRODUCTS (AUTO SYNC) */
 function load(){
 const dbRef = ref(db,"products");
 
@@ -77,11 +161,9 @@ box.innerHTML += `
 <div class="card">
 <img src="${p.img}">
 <h3>${p.name}</h3>
-<p>₹${p.price}</p>
+<p class="price">₹${p.price}</p>
 
-<button onclick="buy('${p.name}',${p.price})">Buy</button>
-
-${isAdmin ? `<button onclick="del('${k}')">Delete</button>` : ""}
+<button class="buy" onclick="buy('${p.name}',${p.price})">Buy Now</button>
 </div>`;
 });
 });
@@ -98,28 +180,10 @@ name,price,img
 });
 }
 
-/* DELETE PRODUCT */
-window.del = function(key){
-set(ref(db,"products/"+key),null);
-}
-
-/* ADMIN LOGIN */
-window.login = function(){
-let pass = prompt("Enter Password");
-if(pass === "1234"){
-isAdmin = true;
-document.getElementById("adminPanel").style.display = "block";
-alert("Admin Mode ON");
-load();
-}else{
-alert("Wrong Password");
-}
-}
-
-/* BUY → WHATSAPP */
+/* WHATSAPP ORDER */
 window.buy = function(name,price){
 
-let phone = prompt("Phone");
+let phone = prompt("Phone Number");
 let address = prompt("Address");
 
 let msg = `Order:
