@@ -1,104 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Fit Hub</title>
-
-<style>
-body{margin:0;font-family:Arial;background:#f5f5f5;}
-
-header{
-background:#111;color:#fff;padding:15px;
-text-align:center;font-size:22px;
-}
-
-.banner{
-background:url('https://images.unsplash.com/photo-1521334884684-d80222895322') center/cover;
-height:200px;color:#fff;
-display:flex;align-items:center;justify-content:center;
-font-size:30px;font-weight:bold;
-}
-
-.products{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:15px;padding:15px;
-}
-
-.card{
-background:#fff;border-radius:10px;
-padding:10px;text-align:center;
-box-shadow:0 0 8px rgba(0,0,0,0.1);
-}
-
-.card img{
-width:100%;height:180px;object-fit:cover;border-radius:8px;
-}
-
-.price{color:green;font-weight:bold;}
-
-button{
-background:black;color:white;
-border:none;padding:8px;border-radius:5px;
-cursor:pointer;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Fit Hub Store</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<header>Fit Hub</header>
+    <nav>
+        <div class="logo">THE FIT HUB STORE</div>
+    </nav>
 
-<div class="banner">
-New Collection 2026
-</div>
+    <header class="hero">
+        <h1>Elevate Your Fitness Journey</h1>
+        <p>Premium Quality Sportswear at Affordable Prices</p>
+        <a href="#products" class="cta-btn">Shop Now</a>
+    </header>
 
-<div class="products" id="list"></div>
+    <section id="products" class="products">
+        <h2 class="section-title">Latest Collections</h2>
+        <div class="product-grid">
+            <div class="product-card">
+                <div class="img-placeholder">Product Image</div>
+                <h3>Dry-Fit Training Tee</h3>
+                <p class="price">₹499</p>
+                <a href="https://wa.me/91YOURNUMBER?text=I'm%20interested%20in%20Training%20Tee" class="buy-now">Order on WhatsApp</a>
+            </div>
 
-<script>
+            <div class="product-card">
+                <div class="img-placeholder">Product Image</div>
+                <h3>Performance Gym Shorts</h3>
+                <p class="price">₹399</p>
+                <a href="https://wa.me/91YOURNUMBER?text=I'm%20interested%20in%20Gym%20Shorts" class="buy-now">Order on WhatsApp</a>
+            </div>
+        </div>
+    </section>
 
-let products = [
-{name:"Black Shirt",price:799,img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf"},
-{name:"White T-Shirt",price:599,img:"https://images.unsplash.com/photo-1521572267360-ee0c2909d518"},
-{name:"Hoodie",price:1299,img:"https://images.unsplash.com/photo-1520975958225-0c7f5c0c1f2d"},
-{name:"Jacket",price:1999,img:"https://images.unsplash.com/photo-1520975682031-a7f5b3c8f7a5"}
-];
-
-function load(){
-
-let box=document.getElementById("list");
-box.innerHTML="";
-
-products.forEach(p=>{
-box.innerHTML+=`
-<div class="card">
-<img src="${p.img}">
-<h3>${p.name}</h3>
-<p class="price">₹${p.price}</p>
-
-<button onclick="order('${p.name}',${p.price})">Buy Now</button>
-</div>`;
-});
-
-}
-
-function order(name,price){
-
-let phone=prompt("Phone");
-let address=prompt("Address");
-
-let msg =
-"Order:%0AProduct: "+name+
-"%0APrice: ₹"+price+
-"%0APhone: "+phone+
-"%0AAddress: "+address;
-
-window.open("https://wa.me/91YOURNUMBER?text="+msg);
-
-}
-
-load();
-
-</script>
+    <footer>
+        <p>&copy; 2026 The Fit Hub Store. All Rights Reserved.</p>
+    </footer>
 
 </body>
 </html>
