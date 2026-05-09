@@ -1,164 +1,383 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Fit Hub</title>
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box}
 body{
-margin:0;
-font-family:system-ui;
-background:#f7f7f7;
+font-family:Arial,Helvetica,sans-serif;
+background:#f5f5f6;
+color:#222;
 }
 
-/* TOP BAR */
-.topbar{
+/* HEADER */
+header{
+height:70px;
+background:#fff;
 display:flex;
-justify-content:space-between;
 align-items:center;
-padding:15px 20px;
-background:white;
-box-shadow:0 2px 10px rgba(0,0,0,0.08);
+justify-content:space-between;
+padding:0 25px;
+box-shadow:0 2px 10px rgba(0,0,0,.08);
 position:sticky;
 top:0;
+z-index:100;
 }
 
-.logo{font-weight:700;font-size:20px}
+.logo{
+font-size:24px;
+font-weight:700;
+letter-spacing:1px;
+}
 
-.btn{
-background:#ff3f6c;
-color:white;
+.nav{
+display:flex;
+gap:12px;
+align-items:center;
+}
+
+.nav button{
+padding:10px 14px;
 border:none;
-padding:8px 12px;
-border-radius:6px;
+border-radius:8px;
 cursor:pointer;
+background:#ff3f6c;
+color:#fff;
+font-weight:600;
+}
+
+/* HERO */
+.hero{
+margin:18px;
+height:260px;
+border-radius:18px;
+background:linear-gradient(135deg,#111,#333);
+color:#fff;
+display:flex;
+flex-direction:column;
+justify-content:center;
+padding:30px;
+}
+
+.hero h1{
+font-size:34px;
+margin-bottom:10px;
+}
+
+.hero p{
+font-size:16px;
+opacity:.9;
+}
+
+/* SECTION TITLE */
+.title{
+padding:0 18px 10px;
+font-size:22px;
+font-weight:700;
 }
 
 /* PRODUCTS */
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:15px;
-padding:15px;
+gap:18px;
+padding:0 18px 25px;
 }
 
 .card{
-background:white;
-border-radius:12px;
+background:#fff;
+border-radius:16px;
 overflow:hidden;
-box-shadow:0 3px 12px rgba(0,0,0,0.08);
-text-align:center;
+box-shadow:0 4px 18px rgba(0,0,0,.08);
+transition:.2s;
+}
+
+.card:hover{
+transform:translateY(-6px);
 }
 
 .card img{
 width:100%;
-height:200px;
+height:230px;
 object-fit:cover;
 }
 
+.card-body{
+padding:12px;
+}
+
+.card h3{
+font-size:18px;
+margin-bottom:6px;
+}
+
+.price{
+color:#0a8a39;
+font-weight:700;
+margin-bottom:10px;
+}
+
+.buy-btn{
+width:100%;
+padding:10px;
+border:none;
+border-radius:10px;
+background:#ff3f6c;
+color:#fff;
+font-weight:700;
+cursor:pointer;
+}
+
 /* DRAWER */
+.overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.45);
+display:none;
+z-index:200;
+}
+
 .drawer{
 position:fixed;
 top:0;
-right:-320px;
-width:300px;
+right:-360px;
+width:340px;
 height:100%;
-background:white;
-box-shadow:-5px 0 20px rgba(0,0,0,0.2);
-padding:15px;
-transition:0.3s;
-z-index:100;
+background:#fff;
+z-index:300;
+box-shadow:-5px 0 20px rgba(0,0,0,.15);
+transition:.3s;
+padding:18px;
+overflow:auto;
 }
 
 .drawer.open{
 right:0;
 }
 
-.overlay{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.4);
-display:none;
-z-index:99;
-}
-
 .overlay.show{
 display:block;
 }
 
-/* EDIT SECTION */
-input{
-width:100%;
-padding:8px;
-margin:5px 0;
-border:1px solid #ddd;
-border-radius:6px;
+.drawer h2{
+margin-bottom:12px;
 }
 
-.save{
+.drawer p{
+font-size:14px;
+line-height:1.5;
+margin-bottom:15px;
+color:#555;
+}
+
+.drawer input,
+.drawer textarea{
 width:100%;
-background:#111;
-color:white;
 padding:10px;
+margin-bottom:10px;
+border:1px solid #ddd;
+border-radius:10px;
+font-size:14px;
+}
+
+.drawer textarea{
+height:90px;
+resize:none;
+}
+
+.drawer button{
+width:100%;
+padding:11px;
 border:none;
-border-radius:6px;
+border-radius:10px;
+background:#111;
+color:#fff;
+font-weight:700;
 cursor:pointer;
-margin-top:10px;
+margin-bottom:10px;
+}
+
+.small{
+font-size:12px;
+color:#666;
+margin-top:8px;
+}
+
+/* MOBILE */
+@media(max-width:700px){
+.hero{height:220px}
+.hero h1{font-size:28px}
+.drawer{width:100%;right:-100%}
 }
 </style>
 </head>
-
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar">
+<header>
 <div class="logo">FIT HUB</div>
 
-<div>
-<button class="btn" onclick="openDrawer()">About</button>
+<div class="nav">
+<button onclick="openDrawer()">About</button>
 </div>
-</div>
+</header>
 
-<!-- PRODUCTS -->
-<div class="grid">
+<section class="hero">
+<h1 id="heroTitle">Premium Fashion Store</h1>
+<p id="heroDesc">Modern style, comfort and confidence.</p>
+</section>
 
-<div class="card">
-<img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf">
-<h3>Black Shirt</h3>
-<p>₹799</p>
-<button class="btn">Buy</button>
-</div>
+<div class="title">Trending Products</div>
 
-</div>
+<section class="grid" id="productsGrid"></section>
 
-<!-- OVERLAY -->
+<!-- Overlay -->
 <div class="overlay" id="overlay" onclick="closeDrawer()"></div>
 
-<!-- DRAWER -->
+<!-- Drawer -->
 <div class="drawer" id="drawer">
 
-<h3>About Fit Hub</h3>
-<p style="font-size:14px;color:#555">
-Premium fashion store built for modern style.
+<h2>About Fit Hub</h2>
+<p id="aboutText">
+Fit Hub is a premium clothing destination with modern fashion essentials.
 </p>
 
-<hr>
+<hr style="margin:15px 0">
 
-<h3>Edit Panel</h3>
+<h2>Edit Website</h2>
 
-<input id="name" placeholder="Edit Title">
-<input id="desc" placeholder="Description">
+<input id="editHeroTitle" placeholder="Hero Title">
+<textarea id="editHeroDesc" placeholder="Hero Description"></textarea>
+<textarea id="editAbout" placeholder="About Text"></textarea>
 
-<button class="save" onclick="save()">Save Changes</button>
+<button onclick="saveContent()">Save Content</button>
+
+<hr style="margin:15px 0">
+
+<h2>Add Product</h2>
+
+<input id="pname" placeholder="Product Name">
+<input id="pprice" placeholder="Price">
+<input id="pimg" placeholder="Image URL">
+
+<button onclick="addProduct()">Add Product</button>
+
+<p class="small">All edits save in your browser instantly.</p>
 
 </div>
 
 <script>
+/* STORAGE KEYS */
+const contentKey = "fithub_content";
+const productKey = "fithub_products";
 
+/* DEFAULT PRODUCTS */
+let products = JSON.parse(localStorage.getItem(productKey)) || [
+{
+name:"Black Shirt",
+price:"799",
+img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf"
+},
+{
+name:"White Shirt",
+price:"699",
+img:"https://images.unsplash.com/photo-1521572267360-ee0c2909d518"
+},
+{
+name:"Premium Hoodie",
+price:"1299",
+img:"https://images.unsplash.com/photo-1520975958225-0c7f5c0c1f2d"
+}
+];
+
+/* LOAD CONTENT */
+function loadContent(){
+let saved = JSON.parse(localStorage.getItem(contentKey));
+
+if(saved){
+document.getElementById("heroTitle").innerText = saved.heroTitle;
+document.getElementById("heroDesc").innerText = saved.heroDesc;
+document.getElementById("aboutText").innerText = saved.about;
+}
+}
+
+/* SAVE CONTENT */
+function saveContent(){
+
+let data = {
+heroTitle:document.getElementById("editHeroTitle").value || "Premium Fashion Store",
+heroDesc:document.getElementById("editHeroDesc").value || "Modern style, comfort and confidence.",
+about:document.getElementById("editAbout").value || "Fit Hub premium store."
+};
+
+localStorage.setItem(contentKey,JSON.stringify(data));
+loadContent();
+alert("Updated Successfully");
+}
+
+/* RENDER PRODUCTS */
+function renderProducts(){
+let box = document.getElementById("productsGrid");
+box.innerHTML = "";
+
+products.forEach((p,i)=>{
+
+box.innerHTML += `
+<div class="card">
+<img src="${p.img}">
+<div class="card-body">
+<h3>${p.name}</h3>
+<div class="price">₹${p.price}</div>
+<button class="buy-btn" onclick="buyNow('${p.name}','${p.price}')">Buy Now</button>
+</div>
+</div>
+`;
+
+});
+
+localStorage.setItem(productKey,JSON.stringify(products));
+}
+
+/* ADD PRODUCT */
+function addProduct(){
+
+let name = document.getElementById("pname").value;
+let price = document.getElementById("pprice").value;
+let img = document.getElementById("pimg").value;
+
+if(!name || !price || !img){
+alert("Fill all fields");
+return;
+}
+
+products.push({name,price,img});
+renderProducts();
+
+document.getElementById("pname").value="";
+document.getElementById("pprice").value="";
+document.getElementById("pimg").value="";
+
+alert("Product Added");
+}
+
+/* BUY */
+function buyNow(name,price){
+
+let phone = prompt("Phone Number");
+let address = prompt("Address");
+
+let msg = `Order:
+Product: ${name}
+Price: ₹${price}
+Phone: ${phone}
+Address: ${address}`;
+
+window.open("https://wa.me/917736789255?text="+encodeURIComponent(msg));
+}
+
+/* DRAWER */
 function openDrawer(){
 document.getElementById("drawer").classList.add("open");
 document.getElementById("overlay").classList.add("show");
@@ -169,15 +388,9 @@ document.getElementById("drawer").classList.remove("open");
 document.getElementById("overlay").classList.remove("show");
 }
 
-/* SIMPLE EDIT SAVE (demo) */
-function save(){
-let name=document.getElementById("name").value;
-let desc=document.getElementById("desc").value;
-
-alert("Saved:\n"+name+"\n"+desc);
-closeDrawer();
-}
-
+/* INIT */
+loadContent();
+renderProducts();
 </script>
 
 </body>
