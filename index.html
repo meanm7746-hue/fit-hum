@@ -7,164 +7,133 @@
 
 <style>
 body{margin:0;font-family:Arial;background:#f5f5f5;}
-
-header{
-background:#111;
-color:white;
-padding:15px;
-text-align:center;
-font-size:22px;
-}
-
-nav button{
-margin:5px;
-padding:8px;
-border:none;
-background:white;
-cursor:pointer;
-border-radius:5px;
-}
-
-section{display:none;padding:15px;}
-.active{display:block;}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:15px;
-}
-
-.card{
-background:white;
-padding:10px;
-border-radius:10px;
-text-align:center;
-}
-
-.card img{
-width:100%;
-height:180px;
-object-fit:cover;
-border-radius:8px;
-}
-
-button{
-background:#111;
-color:white;
-padding:8px;
-border:none;
-border-radius:5px;
-cursor:pointer;
-margin:3px;
-}
-
-input,textarea{
-width:90%;
-padding:10px;
-margin:5px 0;
-}
+header{background:#111;color:white;padding:15px;text-align:center;}
+section{padding:15px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;}
+.card{background:white;padding:10px;border-radius:10px;text-align:center;}
+.card img{width:100%;height:180px;object-fit:cover;border-radius:8px;}
+button{background:#111;color:white;padding:8px;border:none;border-radius:5px;cursor:pointer;margin:3px;}
+input,textarea{width:90%;padding:10px;margin:5px 0;}
 </style>
 </head>
 
 <body>
 
-<header>
-FIT HUB
+<header>FIT HUB</header>
 
-<nav>
-<button onclick="show('home')">Home</button>
-<button onclick="show('products')">Products</button>
-<button onclick="show('order')">Order</button>
-</nav>
+<section>
 
-</header>
+<h3>Admin Login</h3>
+<button onclick="login()">Admin Mode</button>
 
-<!-- HOME -->
-<section id="home" class="active">
-<h2>Welcome to Fit Hub</h2>
-<p>Premium Clothing Store</p>
-</section>
-
-<!-- PRODUCTS -->
-<section id="products">
-
-<h2>Products</h2>
-
-<div class="grid">
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf">
-<h3>Black Shirt</h3>
-<p>₹799</p>
-<button onclick="buy('Black Shirt',799)">Buy</button>
+<div id="adminPanel" style="display:none;">
+<h3>Add Product</h3>
+<input id="pname" placeholder="Product Name">
+<input id="pprice" placeholder="Price">
+<input id="pimg" placeholder="Image URL">
+<button onclick="add()">Add Product</button>
 </div>
 
-<div class="card">
-<img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518">
-<h3>White Shirt</h3>
-<p>₹699</p>
-<button onclick="buy('White Shirt',699)">Buy</button>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1520975958225-0c7f5c0c1f2d">
-<h3>Hoodie</h3>
-<p>₹1299</p>
-<button onclick="buy('Hoodie',1299)">Buy</button>
-</div>
-
-</div>
+<h3>Products</h3>
+<div class="grid" id="list"></div>
 
 </section>
 
-<!-- ORDER -->
-<section id="order">
-<h2>Place Order</h2>
+<!-- Firebase -->
+<script type="module">
 
-<input id="name" placeholder="Name">
-<input id="phone" placeholder="Phone">
-<textarea id="address" placeholder="Address"></textarea>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-<button onclick="send()">Send Order</button>
-</section>
+/* 🔥 YOUR FIREBASE CONFIG */
+const firebaseConfig = {
+  apiKey: "AIzaSyCCZROy6wzevuizlgRXgjY05VQBWRicNMY",
+  authDomain: "fithub-9a878.firebaseapp.com",
+  databaseURL: "https://fithub-9a878-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "fithub-9a878",
+  storageBucket: "fithub-9a878.firebasestorage.app",
+  messagingSenderId: "541686780215",
+  appId: "1:541686780215:web:c0dd12bf5353f23eaecab2"
+};
 
-<script>
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-let selectedName="";
-let selectedPrice="";
+let isAdmin=false;
 
-/* PAGE SWITCH */
-function show(p){
-document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
-document.getElementById(p).classList.add("active");
+/* LOAD PRODUCTS (REALTIME AUTO SYNC) */
+function load(){
+const dbRef = ref(db,"products");
+
+onValue(dbRef,(snap)=>{
+let data = snap.val() || {};
+let box = document.getElementById("list");
+box.innerHTML = "";
+
+Object.keys(data).forEach(k=>{
+let p = data[k];
+
+box.innerHTML += `
+<div class="card">
+<img src="${p.img}">
+<h3>${p.name}</h3>
+<p>₹${p.price}</p>
+
+<button onclick="buy('${p.name}',${p.price})">Buy</button>
+
+${isAdmin ? `<button onclick="del('${k}')">Delete</button>` : ""}
+</div>`;
+});
+});
 }
 
-/* BUY PRODUCT */
-function buy(name,price){
-selectedName=name;
-selectedPrice=price;
-show('order');
+/* ADD PRODUCT */
+window.add = function(){
+let name = document.getElementById("pname").value;
+let price = document.getElementById("pprice").value;
+let img = document.getElementById("pimg").value;
+
+set(ref(db,"products/"+Date.now()),{
+name,price,img
+});
 }
 
-/* WHATSAPP ORDER */
-function send(){
+/* DELETE PRODUCT */
+window.del = function(key){
+set(ref(db,"products/"+key),null);
+}
 
-let name=document.getElementById("name").value;
-let phone=document.getElementById("phone").value;
-let address=document.getElementById("address").value;
+/* ADMIN LOGIN */
+window.login = function(){
+let pass = prompt("Enter Password");
+if(pass === "1234"){
+isAdmin = true;
+document.getElementById("adminPanel").style.display = "block";
+alert("Admin Mode ON");
+load();
+}else{
+alert("Wrong Password");
+}
+}
 
-let msg=`Order:
-Product: ${selectedName}
-Price: ₹${selectedPrice}
-Name: ${name}
+/* BUY → WHATSAPP */
+window.buy = function(name,price){
+
+let phone = prompt("Phone");
+let address = prompt("Address");
+
+let msg = `Order:
+Product: ${name}
+Price: ₹${price}
 Phone: ${phone}
 Address: ${address}`;
 
-let number="917736789255";
+let number = "917736789255";
 
 window.open("https://wa.me/"+number+"?text="+encodeURIComponent(msg));
-
 }
+
+load();
 
 </script>
 
