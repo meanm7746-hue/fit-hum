@@ -3,11 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Fit Hub Premium</title>
+<title>Fit Hub Premium Admin</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-
 body{
 font-family:Arial,Helvetica,sans-serif;
 background:#0b0b0c;
@@ -17,44 +16,41 @@ color:#fff;
 /* HEADER */
 header{
 position:fixed;
-top:0;
-left:0;
-right:0;
-height:76px;
+top:0;left:0;right:0;
+height:74px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:0 24px;
-background:rgba(0,0,0,.55);
-backdrop-filter:blur(14px);
+padding:0 22px;
+background:rgba(0,0,0,.58);
+backdrop-filter:blur(12px);
 z-index:1000;
-border-bottom:1px solid rgba(255,255,255,.06);
+border-bottom:1px solid rgba(255,255,255,.05);
 }
 
 .logo{
 font-size:28px;
 font-weight:900;
-letter-spacing:2px;
 cursor:pointer;
+letter-spacing:2px;
 background:linear-gradient(90deg,#fff,#d6b36a,#fff);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
 
-.nav button{
-padding:11px 16px;
+.shopbtn{
+padding:12px 18px;
 border:none;
 border-radius:14px;
-background:linear-gradient(135deg,#d6b36a,#8e6a2f);
-font-weight:800;
+font-weight:900;
 cursor:pointer;
+background:linear-gradient(135deg,#d6b36a,#8e6a2f);
 }
 
 /* HERO */
 .hero{
-height:100vh;
-min-height:680px;
-padding:120px 28px 50px;
+min-height:92vh;
+padding:120px 25px 60px;
 display:flex;
 align-items:center;
 background:
@@ -62,37 +58,32 @@ linear-gradient(to right,rgba(0,0,0,.72),rgba(0,0,0,.2)),
 url('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1600&q=80') center/cover;
 }
 
-.hero-box{
-max-width:620px;
-}
+.hero-box{max-width:620px}
 
 .hero h1{
-font-size:58px;
+font-size:56px;
 line-height:1.05;
-margin-bottom:16px;
+margin-bottom:14px;
 }
 
 .hero p{
 font-size:17px;
 line-height:1.7;
-opacity:.92;
-margin-bottom:22px;
+opacity:.9;
+margin-bottom:20px;
 }
 
 .hero button{
 padding:14px 22px;
 border:none;
 border-radius:16px;
-background:linear-gradient(135deg,#d6b36a,#8e6a2f);
 font-weight:900;
 cursor:pointer;
+background:linear-gradient(135deg,#d6b36a,#8e6a2f);
 }
 
 /* SECTION */
-.section{
-padding:55px 20px;
-}
-
+.section{padding:55px 20px}
 .title{
 font-size:34px;
 font-weight:900;
@@ -102,7 +93,7 @@ margin-bottom:20px;
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-gap:20px;
+gap:18px;
 }
 
 .card{
@@ -119,9 +110,7 @@ height:300px;
 object-fit:cover;
 }
 
-.card-body{
-padding:16px;
-}
+.card-body{padding:16px}
 
 .card h3{
 font-size:20px;
@@ -140,12 +129,12 @@ width:100%;
 padding:12px;
 border:none;
 border-radius:14px;
-background:linear-gradient(135deg,#d6b36a,#8e6a2f);
 font-weight:900;
 cursor:pointer;
+background:linear-gradient(135deg,#d6b36a,#8e6a2f);
 }
 
-/* MODALS */
+/* MODAL */
 .overlay{
 position:fixed;
 inset:0;
@@ -154,34 +143,24 @@ display:none;
 justify-content:center;
 align-items:center;
 padding:18px;
-z-index:2000;
+z-index:3000;
 }
 
-.overlay.show{
-display:flex;
-}
+.overlay.show{display:flex}
 
 .modal{
 width:100%;
-max-width:460px;
+max-width:470px;
 background:#141416;
 border-radius:28px;
 padding:24px;
 border:1px solid rgba(255,255,255,.06);
 }
 
-.modal h2{
-font-size:28px;
-margin-bottom:10px;
-}
+.modal h2{font-size:28px;margin-bottom:10px}
+.modal p{opacity:.72;margin-bottom:14px}
 
-.modal p{
-opacity:.72;
-margin-bottom:14px;
-}
-
-.modal input,
-.modal textarea{
+.modal input,.modal textarea{
 width:100%;
 padding:13px;
 border:none;
@@ -191,17 +170,14 @@ color:#fff;
 margin-bottom:10px;
 }
 
-.modal textarea{
-height:90px;
-resize:none;
-}
+.modal textarea{height:90px;resize:none}
 
-.actions{
+.row{
 display:flex;
 gap:10px;
 }
 
-.actions button{
+.row button{
 flex:1;
 padding:13px;
 border:none;
@@ -214,31 +190,34 @@ cursor:pointer;
 .confirm{background:linear-gradient(135deg,#d6b36a,#8e6a2f)}
 
 /* ADMIN PANEL */
-.admin-panel{
+.admin{
 position:fixed;
-right:20px;
-bottom:20px;
-width:320px;
-background:#141416;
-border-radius:24px;
+top:0;
+right:-390px;
+width:380px;
+height:100%;
+background:#111214;
+z-index:4000;
 padding:18px;
-display:none;
-z-index:3000;
-border:1px solid rgba(255,255,255,.06);
-box-shadow:0 20px 45px rgba(0,0,0,.35);
+overflow:auto;
+transition:.3s;
+border-left:1px solid rgba(255,255,255,.05);
 }
 
-.admin-panel.show{
-display:block;
-}
+.admin.show{right:0}
 
-.admin-panel h3{
+.admin h3{
+font-size:24px;
 margin-bottom:12px;
-font-size:22px;
 }
 
-.admin-panel input,
-.admin-panel textarea{
+.admin h4{
+margin:14px 0 10px;
+font-size:16px;
+color:#d6b36a;
+}
+
+.admin input,.admin textarea{
 width:100%;
 padding:12px;
 border:none;
@@ -248,36 +227,32 @@ color:#fff;
 margin-bottom:10px;
 }
 
-.admin-panel textarea{
-height:80px;
-resize:none;
-}
+.admin textarea{height:80px;resize:none}
 
-.admin-panel button{
+.admin button{
 width:100%;
 padding:12px;
 border:none;
 border-radius:14px;
-background:linear-gradient(135deg,#d6b36a,#8e6a2f);
 font-weight:900;
 cursor:pointer;
 margin-bottom:8px;
+background:linear-gradient(135deg,#d6b36a,#8e6a2f);
 }
 
-.small{
-font-size:12px;
-opacity:.65;
-margin-top:6px;
+.small{font-size:12px;opacity:.65}
+
+.product-admin{
+padding:10px;
+background:#191a1d;
+border-radius:14px;
+margin-bottom:10px;
+font-size:13px;
 }
 
 @media(max-width:700px){
-.hero h1{font-size:40px}
-.admin-panel{
-left:10px;
-right:10px;
-bottom:10px;
-width:auto;
-}
+.hero h1{font-size:38px}
+.admin{width:100%;right:-100%}
 }
 </style>
 </head>
@@ -285,182 +260,254 @@ width:auto;
 
 <header>
 <div class="logo" onclick="secretTap()">FIT HUB</div>
-
-<div class="nav">
-<button onclick="scrollToProducts()">SHOP NOW</button>
-</div>
+<button class="shopbtn" onclick="goProducts()">SHOP NOW</button>
 </header>
 
 <section class="hero">
 <div class="hero-box">
 <h1 id="heroTitle">Premium Fashion For Elite Style</h1>
-<p id="heroDesc">
-Luxury designs, premium comfort and timeless confidence.
-</p>
-<button onclick="scrollToProducts()">EXPLORE NOW</button>
+<p id="heroDesc">Luxury designs, premium comfort and timeless confidence.</p>
+<button onclick="goProducts()">EXPLORE NOW</button>
 </div>
 </section>
 
 <section class="section" id="products">
 <div class="title">Trending Collection</div>
-
-<div class="grid" id="productGrid">
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=900&q=80">
-<div class="card-body">
-<h3>Royal Black Shirt</h3>
-<div class="price">₹799</div>
-<button class="buy" onclick="openOrder('Royal Black Shirt','799')">BUY NOW</button>
-</div>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80">
-<div class="card-body">
-<h3>Urban White Tee</h3>
-<div class="price">₹699</div>
-<button class="buy" onclick="openOrder('Urban White Tee','699')">BUY NOW</button>
-</div>
-</div>
-
-</div>
+<div class="grid" id="grid"></div>
 </section>
 
-<!-- ORDER MODAL -->
-<div class="overlay" id="orderOverlay">
+<!-- ORDER -->
+<div class="overlay" id="orderBox">
 <div class="modal">
 <h2>Place Order</h2>
-<p id="orderProduct"></p>
-
+<p id="orderLine"></p>
 <input id="custName" placeholder="Full Name">
 <input id="custPhone" placeholder="Phone Number">
 <textarea id="custAddress" placeholder="Delivery Address"></textarea>
-
-<div class="actions">
+<div class="row">
 <button class="cancel" onclick="closeOrder()">Cancel</button>
 <button class="confirm" onclick="sendOrder()">Confirm</button>
 </div>
 </div>
 </div>
 
-<!-- ADMIN LOGIN -->
-<div class="overlay" id="loginOverlay">
+<!-- LOGIN -->
+<div class="overlay" id="loginBox">
 <div class="modal">
 <h2>Admin Login</h2>
-<p>Authorized access only</p>
-
-<input type="password" id="adminPass" placeholder="Enter Password">
-
-<div class="actions">
+<p>Hidden secure access</p>
+<input type="password" id="pass" placeholder="Password">
+<div class="row">
 <button class="cancel" onclick="closeLogin()">Close</button>
-<button class="confirm" onclick="loginAdmin()">Login</button>
+<button class="confirm" onclick="login()">Login</button>
 </div>
 </div>
 </div>
 
 <!-- ADMIN PANEL -->
-<div class="admin-panel" id="adminPanel">
-<h3>Admin Edit</h3>
+<div class="admin" id="adminPanel">
 
-<input id="editTitle" placeholder="Hero Title">
-<textarea id="editDesc" placeholder="Hero Description"></textarea>
+<h3>Admin Dashboard</h3>
 
-<button onclick="saveHero()">Save Content</button>
-<button onclick="logoutAdmin()">Close Admin</button>
+<h4>Hero Section</h4>
+<input id="aTitle" placeholder="Hero Title">
+<textarea id="aDesc" placeholder="Hero Description"></textarea>
+<button onclick="saveHero()">Save Hero</button>
 
+<h4>WhatsApp Number</h4>
+<input id="waNum" placeholder="91xxxxxxxxxx">
+<button onclick="saveNumber()">Save Number</button>
+
+<h4>Add Product</h4>
+<input id="pName" placeholder="Product Name">
+<input id="pPrice" placeholder="Price">
+<input id="pImg" placeholder="Image URL">
+<button onclick="addProduct()">Add Product</button>
+
+<h4>Manage Products</h4>
+<div id="productAdminList"></div>
+
+<button onclick="closeAdmin()">Close Panel</button>
 <div class="small">Customers cannot see this panel.</div>
+
 </div>
 
 <script>
-let selectedProduct="";
+let taps=0;
+let selectedName="";
 let selectedPrice="";
-let tapCount=0;
+let currentEdit=-1;
 
-/* SECRET ADMIN OPEN */
+let settings=JSON.parse(localStorage.getItem("fit_settings"))||{
+title:"Premium Fashion For Elite Style",
+desc:"Luxury designs, premium comfort and timeless confidence.",
+wa:"917736789255"
+};
+
+let products=JSON.parse(localStorage.getItem("fit_products"))||[
+{name:"Royal Black Shirt",price:"799",img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=900&q=80"},
+{name:"Urban White Tee",price:"699",img:"https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80"}
+];
+
+function saveAll(){
+localStorage.setItem("fit_settings",JSON.stringify(settings));
+localStorage.setItem("fit_products",JSON.stringify(products));
+}
+
+/* LOAD */
+function loadSite(){
+heroTitle.innerText=settings.title;
+heroDesc.innerText=settings.desc;
+waNum.value=settings.wa;
+renderProducts();
+}
+
+/* PRODUCTS */
+function renderProducts(){
+grid.innerHTML="";
+productAdminList.innerHTML="";
+
+products.forEach((p,i)=>{
+
+grid.innerHTML+=`
+<div class="card">
+<img src="${p.img}">
+<div class="card-body">
+<h3>${p.name}</h3>
+<div class="price">₹${p.price}</div>
+<button class="buy" onclick="openOrder('${p.name}','${p.price}')">BUY NOW</button>
+</div>
+</div>
+`;
+
+productAdminList.innerHTML+=`
+<div class="product-admin">
+<b>${p.name}</b> • ₹${p.price}<br><br>
+<button onclick="editProduct(${i})">Edit</button>
+<button onclick="deleteProduct(${i})">Delete</button>
+</div>
+`;
+
+});
+
+saveAll();
+}
+
+/* SECRET LOGIN */
 function secretTap(){
-tapCount++;
-
-if(tapCount>=5){
-document.getElementById("loginOverlay").classList.add("show");
-tapCount=0;
+taps++;
+if(taps>=5){
+loginBox.classList.add("show");
+taps=0;
+}
+setTimeout(()=>{taps=0},2000);
 }
 
-setTimeout(()=>{tapCount=0},2000);
-}
-
-/* LOGIN */
-function loginAdmin(){
-let pass=document.getElementById("adminPass").value;
-
-if(pass==="1234"){
+function login(){
+if(pass.value==="1234"){
 closeLogin();
-document.getElementById("adminPanel").classList.add("show");
+adminPanel.classList.add("show");
 }else{
 alert("Wrong Password");
 }
 }
 
-function logoutAdmin(){
-document.getElementById("adminPanel").classList.remove("show");
-}
+function closeLogin(){loginBox.classList.remove("show")}
+function closeAdmin(){adminPanel.classList.remove("show")}
 
-function closeLogin(){
-document.getElementById("loginOverlay").classList.remove("show");
-}
-
-/* EDIT HERO */
+/* HERO */
 function saveHero(){
-let t=document.getElementById("editTitle").value;
-let d=document.getElementById("editDesc").value;
+settings.title=aTitle.value || settings.title;
+settings.desc=aDesc.value || settings.desc;
+loadSite();
+alert("Hero Updated");
+}
 
-if(t) document.getElementById("heroTitle").innerText=t;
-if(d) document.getElementById("heroDesc").innerText=d;
+/* NUMBER */
+function saveNumber(){
+settings.wa=waNum.value.trim();
+saveAll();
+alert("WhatsApp Updated");
+}
 
-alert("Updated");
+/* ADD PRODUCT */
+function addProduct(){
+let n=pName.value.trim();
+let pr=pPrice.value.trim();
+let img=pImg.value.trim();
+
+if(!n||!pr||!img){alert("Fill all");return;}
+
+products.push({name:n,price:pr,img:img});
+renderProducts();
+
+pName.value="";
+pPrice.value="";
+pImg.value="";
+}
+
+/* DELETE */
+function deleteProduct(i){
+products.splice(i,1);
+renderProducts();
+}
+
+/* EDIT */
+function editProduct(i){
+let p=products[i];
+
+let n=prompt("Product Name",p.name);
+if(n===null)return;
+
+let pr=prompt("Price",p.price);
+if(pr===null)return;
+
+let img=prompt("Image URL",p.img);
+if(img===null)return;
+
+products[i]={name:n,price:pr,img:img};
+renderProducts();
 }
 
 /* ORDER */
-function openOrder(name,price){
-selectedProduct=name;
-selectedPrice=price;
-document.getElementById("orderProduct").innerText=name+" • ₹"+price;
-document.getElementById("orderOverlay").classList.add("show");
+function openOrder(n,p){
+selectedName=n;
+selectedPrice=p;
+orderLine.innerText=n+" • ₹"+p;
+orderBox.classList.add("show");
 }
 
 function closeOrder(){
-document.getElementById("orderOverlay").classList.remove("show");
+orderBox.classList.remove("show");
 }
 
 function sendOrder(){
+let n=custName.value.trim();
+let p=custPhone.value.trim();
+let a=custAddress.value.trim();
 
-let n=document.getElementById("custName").value.trim();
-let p=document.getElementById("custPhone").value.trim();
-let a=document.getElementById("custAddress").value.trim();
-
-if(!n||!p||!a){
-alert("Fill all details");
-return;
-}
+if(!n||!p||!a){alert("Fill all details");return;}
 
 let msg=`Order
 
-Product: ${selectedProduct}
+Product: ${selectedName}
 Price: ₹${selectedPrice}
 
 Name: ${n}
 Phone: ${p}
 Address: ${a}`;
 
-window.open("https://wa.me/917736789255?text="+encodeURIComponent(msg));
-
+window.open("https://wa.me/"+settings.wa+"?text="+encodeURIComponent(msg));
 closeOrder();
 }
 
 /* SCROLL */
-function scrollToProducts(){
+function goProducts(){
+products.scrollIntoView;
 document.getElementById("products").scrollIntoView();
 }
+
+loadSite();
 </script>
 
 </body>
