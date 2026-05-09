@@ -1,67 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fit Hub</title>
+<title>Clothing Store</title>
+
 <style>
-body{margin:0;font-family:Arial;background:#f1f3f6;}
-header{background:#2874f0;color:#fff;padding:15px;text-align:center;font-size:28px;font-weight:bold;}
-.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;padding:15px;}
-.card{background:#fff;padding:15px;border-radius:10px;text-align:center;}
-.card img{width:100%;height:180px;object-fit:cover;border-radius:8px;}
-input,select{width:90%;padding:8px;margin:5px 0;}
-button{background:#2874f0;color:#fff;border:none;padding:10px 15px;border-radius:6px;cursor:pointer;}
+body{margin:0;font-family:Arial;background:#f5f5f5;}
+
+header{
+background:#111;color:#fff;padding:15px;
+text-align:center;font-size:22px;
+}
+
+.banner{
+background:url('https://images.unsplash.com/photo-1521334884684-d80222895322') center/cover;
+height:200px;color:#fff;
+display:flex;align-items:center;justify-content:center;
+font-size:30px;font-weight:bold;
+}
+
+.products{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;padding:15px;
+}
+
+.card{
+background:#fff;border-radius:10px;
+padding:10px;text-align:center;
+box-shadow:0 0 8px rgba(0,0,0,0.1);
+}
+
+.card img{
+width:100%;height:180px;object-fit:cover;border-radius:8px;
+}
+
 .price{color:green;font-weight:bold;}
+
+button{
+background:black;color:white;
+border:none;padding:8px;border-radius:5px;
+cursor:pointer;
+}
 </style>
 </head>
+
 <body>
 
-<header>Fit Hub</header>
+<header>Clothing Store 🛍️</header>
 
-<div class="products">
+<div class="banner">
+New Collection 2026
+</div>
 
+<div class="products" id="list"></div>
+
+<script>
+
+let products = [
+{name:"Black Shirt",price:799,img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf"},
+{name:"White T-Shirt",price:599,img:"https://images.unsplash.com/photo-1521572267360-ee0c2909d518"},
+{name:"Hoodie",price:1299,img:"https://images.unsplash.com/photo-1520975958225-0c7f5c0c1f2d"},
+{name:"Jacket",price:1999,img:"https://images.unsplash.com/photo-1520975682031-a7f5b3c8f7a5"}
+];
+
+function load(){
+
+let box=document.getElementById("list");
+box.innerHTML="";
+
+products.forEach(p=>{
+box.innerHTML+=`
 <div class="card">
-<img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf">
-<h3>Black Shirt</h3>
-<p class="price">₹799</p>
+<img src="${p.img}">
+<h3>${p.name}</h3>
+<p class="price">₹${p.price}</p>
 
-<form action="https://formspree.io/f/xrejyrrd" method="POST">
-<input type="hidden" name="Product" value="Black Shirt">
-<input type="text" name="Name" placeholder="Your Name" required>
-<input type="text" name="Phone" placeholder="Phone Number" required>
-<select name="Size">
-<option>S</option>
-<option>M</option>
-<option>L</option>
-<option>XL</option>
-</select>
-<button type="submit">Buy Now</button>
-</form>
+<button onclick="order('${p.name}',${p.price})">Buy Now</button>
+</div>`;
+});
 
-</div>
+}
 
-<div class="card">
-<img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518">
-<h3>White T-Shirt</h3>
-<p class="price">₹599</p>
+function order(name,price){
 
-<form action="https://formspree.io/f/xrejyrrd" method="POST">
-<input type="hidden" name="Product" value="White T-Shirt">
-<input type="text" name="Name" placeholder="Your Name" required>
-<input type="text" name="Phone" placeholder="Phone Number" required>
-<select name="Size">
-<option>S</option>
-<option>M</option>
-<option>L</option>
-<option>XL</option>
-</select>
-<button type="submit">Buy Now</button>
-</form>
+let phone=prompt("Phone");
+let address=prompt("Address");
 
-</div>
+let msg =
+"Order:%0AProduct: "+name+
+"%0APrice: ₹"+price+
+"%0APhone: "+phone+
+"%0AAddress: "+address;
 
-</div>
+window.open("https://wa.me/91YOURNUMBER?text="+msg);
+
+}
+
+load();
+
+</script>
 
 </body>
 </html>
