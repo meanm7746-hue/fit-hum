@@ -1,204 +1,176 @@
 <!DOCTYPE html>
-<html lang="ml">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FIT HUB V5 - CLOUD STORE</title>
+<title>FIT HUB V5 - PRO STORE</title>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
-    /* മുമ്പത്തെ അതേ സ്റ്റൈൽ തന്നെയാണ്, മാറ്റമില്ല */
     *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:sans-serif; background:#07070a; color:#fff; overflow-x:hidden;}
-    header{position:sticky; top:0; display:flex; justify-content:space-between; align-items:center; padding:16px 20px; background:rgba(10,10,15,0.9); backdrop-filter:blur(15px); border-bottom:1px solid rgba(255,255,255,0.1); z-index:1000;}
-    .logo{ font-size:24px; font-weight:900; color:#9d4edd; cursor:pointer; text-shadow:0 0 15px #9d4edd; }
-    .btn-cart{padding:8px 16px; border:none; border-radius:10px; background:#9d4edd; color:#fff; font-weight:700; cursor:pointer;}
-    .controls{ padding:20px; max-width:1200px; margin:auto; display:flex; gap:10px; }
-    input, select, textarea{ width:100%; padding:14px; margin:8px 0; border:1px solid rgba(255,255,255,0.1); border-radius:12px; background:#15151e; color:#fff; outline:none; }
-    .wrap{ max-width:1200px; margin:auto; padding:0 20px 40px 20px; }
-    .grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:20px; }
-    .card{ background:#121218; border-radius:20px; overflow:hidden; transition:0.3s; border:1px solid rgba(255,255,255,0.03); cursor:pointer;}
-    .card:hover{ transform:translateY(-8px); border-color:#9d4edd; }
-    .card img{ width:100%; height:280px; object-fit:cover; }
-    .info{ padding:15px; }
-    .price{ color:#c77dff; font-weight:900; font-size:20px; }
-    .panel, .overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.9); display:none; justify-content:center; align-items:center; z-index:2000; }
-    .show{ display:flex !important; }
-    .box{ max-width:450px; width:90%; background:#111118; padding:20px; border-radius:24px; border:1px solid rgba(255,255,255,0.1); }
-    .box img{ width:100%; border-radius:15px; margin-bottom:15px; }
-    .admin-drawer{ position:fixed; top:0; right:-100%; width:350px; height:100%; background:#0d0d13; padding:25px; transition:0.4s; z-index:3000; overflow-y:auto; border-left:1px solid #9d4edd; }
-    .admin-drawer.open{ right:0; }
-    .btn-action{ width:100%; padding:12px; border:none; border-radius:12px; background:#1e1e2a; color:#fff; cursor:pointer; font-weight:600; margin-top:10px; }
-    .btn-primary{ background:#9d4edd; }
+    body{font-family:sans-serif; background:#07070a; color:#fff;}
+    
+    header{position:sticky; top:0; display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background:rgba(10,10,15,0.9); backdrop-filter:blur(10px); border-bottom:1px solid #333; z-index:1000;}
+    .logo{font-size:22px; font-weight:900; color:#9d4edd; cursor:pointer;}
+    
+    .wrap{max-width:1200px; margin:auto; padding:20px;}
+    .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:15px;}
+    
+    .card{background:#121218; border-radius:15px; overflow:hidden; position:relative; border:1px solid #222; cursor:pointer;}
+    .badge{position:absolute; top:10px; left:10px; background:#ff206e; color:#fff; padding:4px 8px; border-radius:5px; font-size:11px; font-weight:bold; z-index:10;}
+    
+    .card img{width:100%; height:220px; object-fit:cover;}
+    .info{padding:12px;}
+    .old-price{text-decoration:line-through; color:#888; font-size:13px; margin-right:5px;}
+    .new-price{color:#c77dff; font-weight:900; font-size:16px;}
+
+    /* MODAL / POPUP STYLE */
+    .overlay{position:fixed; inset:0; background:rgba(0,0,0,0.85); display:none; justify-content:center; align-items:center; z-index:3000; padding:20px;}
+    .popup{background:#111118; width:100%; max-width:400px; padding:25px; border-radius:20px; border:1px solid #9d4edd; box-shadow:0 0 30px rgba(157,78,221,0.2);}
+    .popup h2{margin-bottom:15px; color:#9d4edd;}
+    
+    input, textarea, select, .btn-main{width:100%; padding:14px; margin:8px 0; border-radius:12px; border:none; outline:none; font-size:14px;}
+    input, textarea{background:#1a1a24; color:#fff; border:1px solid #333;}
+    .btn-main{background:#9d4edd; color:#fff; font-weight:bold; cursor:pointer; transition:0.3s;}
+    .btn-main:hover{background:#7b2cbf;}
+
+    .admin-drawer{position:fixed; top:0; right:-100%; width:320px; height:100%; background:#0d0d13; padding:20px; transition:0.4s; z-index:2000; overflow-y:auto; border-left:2px solid #9d4edd;}
+    .admin-drawer.open{right:0;}
 </style>
 </head>
 <body>
 
 <header>
     <div class="logo" id="logo">FIT HUB V5</div>
-    <button class="btn-cart" onclick="toggleCart()">Cart (<span id="cartCount">0</span>)</button>
+    <div style="font-size: 12px; opacity: 0.6;">Premium Wear</div>
 </header>
 
-<div id="home-view">
-    <div class="controls">
-        <input id="search" placeholder="Search products..." oninput="renderProducts()">
-        <select id="filter" style="width:120px" onchange="renderProducts()">
-            <option value="">All</option>
-            <option>Shirt</option>
-            <option>Tshirt</option>
-            <option>Hoodie</option>
+<div class="wrap">
+    <input type="text" id="search" placeholder="Search products..." oninput="render()" style="background:#15151e; color:#fff; padding:15px; border-radius:12px; width:100%; border:1px solid #222; margin-bottom:20px;">
+    <div class="grid" id="productGrid"></div>
+</div>
+
+<div class="overlay" id="orderOverlay">
+    <div class="popup">
+        <h2 id="popName">Confirm Order</h2>
+        <p id="popPrice" style="color:#c77dff; font-weight:bold; margin-bottom:10px;"></p>
+        
+        <select id="orderSize">
+            <option value="">Select Size</option>
+            <option>Small (S)</option>
+            <option>Medium (M)</option>
+            <option>Large (L)</option>
+            <option>XL</option>
         </select>
-    </div>
-    <div class="wrap">
-        <div class="grid" id="productGrid">
-            <p style="text-align:center; grid-column: 1/-1;">Loading products...</p>
-        </div>
-    </div>
-</div>
-
-<div id="product-view" style="display:none; padding:20px; max-width:500px; margin:auto;">
-    <button class="btn-action" onclick="showHome()">⬅ Back</button>
-    <div class="box" style="width:100%; margin-top:20px;">
-        <img id="detailImg">
-        <h2 id="detailName"></h2>
-        <p id="detailPrice" class="price"></p>
-        <select id="orderSize"><option>S</option><option>M</option><option>L</option><option>XL</option></select>
-        <input id="userPhone" placeholder="WhatsApp Number">
-        <textarea id="userAddress" placeholder="Full Address"></textarea>
-        <button class="btn-action btn-primary" onclick="sendOrder()">Order via WhatsApp</button>
-    </div>
-</div>
-
-<div class="overlay" id="cartOverlay">
-    <div class="box">
-        <h3>Your Cart</h3>
-        <div id="cartItems" style="margin:15px 0;"></div>
-        <button class="btn-action" onclick="toggleCart()">Close</button>
+        <input type="text" id="custName" placeholder="Your Full Name">
+        <input type="tel" id="custPhone" placeholder="WhatsApp Number">
+        <textarea id="custAddr" placeholder="Delivery Address" rows="3"></textarea>
+        
+        <button class="btn-main" onclick="confirmAndSend()">Confirm & Order on WhatsApp</button>
+        <button onclick="closePopup()" style="background:none; color:#888; border:none; width:100%; cursor:pointer; margin-top:5px;">Cancel</button>
     </div>
 </div>
 
 <div class="admin-drawer" id="adminDrawer">
-    <h3>Admin Panel</h3>
+    <h3>Add Product</h3>
     <input id="pName" placeholder="Product Name">
-    <input id="pPrice" placeholder="Price">
+    <input id="pOldPrice" placeholder="MRP (Old Price)">
+    <input id="pPrice" placeholder="Offer Price (New)">
     <input id="pCat" placeholder="Category">
-    <input id="pImg" placeholder="Image URL">
-    <button class="btn-action btn-primary" onclick="uploadProduct()">Add Product</button>
-    <hr style="margin:20px 0; opacity:0.2;">
+    <input id="pImg" placeholder="Direct Image Link">
+    <button class="btn-main" onclick="upload()">Save to Cloud</button>
+    <hr style="opacity:0.1; margin:20px 0;">
     <div id="adminList"></div>
-    <button class="btn-action" onclick="toggleAdmin()">Close</button>
+    <button onclick="toggleAdmin()" style="margin-top:20px; color:#888;">Close Panel</button>
 </div>
 
 <script>
-    // Firebase Configuration
     const firebaseConfig = {
         apiKey: "AIzaSyC8bcL7IIgoRKQlp8XKYujbFySjCgEcsyY",
         authDomain: "fit-hub-a55e8.firebaseapp.com",
         databaseURL: "https://fit-hub-a55e8-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "fit-hub-a55e8",
         storageBucket: "fit-hub-a55e8.firebasestorage.app",
-        messagingSenderId: "247713917019",
         appId: "1:247713917019:web:75c620862e6c738d37b77e"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database().ref('products');
 
     let allProducts = [];
-    let currentItem = null;
-    let cart = [];
+    let selectedProduct = null;
 
-    // Real-time Data Fetching
-    db.on('value', (snapshot) => {
-        const data = snapshot.val();
+    db.on('value', snap => {
+        const data = snap.val();
         allProducts = [];
-        for (let id in data) {
-            allProducts.push({ id, ...data[id] });
-        }
-        renderProducts();
-        renderAdminList();
+        for(let id in data) allProducts.push({id, ...data[id]});
+        render();
+        renderAdmin();
     });
 
-    function renderProducts() {
+    function render() {
         const grid = document.getElementById('productGrid');
-        const search = document.getElementById('search').value.toLowerCase();
-        const filter = document.getElementById('filter').value;
-        
+        const q = document.getElementById('search').value.toLowerCase();
         grid.innerHTML = "";
-        const filtered = allProducts.filter(p => 
-            p.name.toLowerCase().includes(search) && (filter === "" || p.cat === filter)
-        );
 
-        filtered.forEach(p => {
+        allProducts.filter(p => p.name.toLowerCase().includes(q)).forEach(p => {
+            let discount = Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
             grid.innerHTML += `
-                <div class="card" onclick="openDetails('${p.id}')">
+                <div class="card" onclick="openOrderPopup('${p.id}')">
+                    ${discount > 0 ? `<div class="badge">${discount}% OFF</div>` : ''}
                     <img src="${p.img}">
                     <div class="info">
-                        <h3>${p.name}</h3>
-                        <div class="price">₹${p.price}</div>
+                        <h4>${p.name}</h4>
+                        <span class="old-price">₹${p.oldPrice}</span>
+                        <span class="new-price">₹${p.price}</span>
                     </div>
                 </div>`;
         });
     }
 
-    function openDetails(id) {
-        currentItem = allProducts.find(p => p.id === id);
-        document.getElementById('home-view').style.display = 'none';
-        document.getElementById('product-view').style.display = 'block';
-        document.getElementById('detailImg').src = currentItem.img;
-        document.getElementById('detailName').innerText = currentItem.name;
-        document.getElementById('detailPrice').innerText = "₹" + currentItem.price;
+    function openOrderPopup(id) {
+        selectedProduct = allProducts.find(x => x.id === id);
+        document.getElementById('popName').innerText = selectedProduct.name;
+        document.getElementById('popPrice').innerText = "Price: ₹" + selectedProduct.price;
+        document.getElementById('orderOverlay').classList.add('show');
     }
 
-    function showHome() {
-        document.getElementById('home-view').style.display = 'block';
-        document.getElementById('product-view').style.display = 'none';
+    function closePopup() {
+        document.getElementById('orderOverlay').classList.remove('show');
     }
 
-    function uploadProduct() {
+    function confirmAndSend() {
+        const size = document.getElementById('orderSize').value;
+        const name = document.getElementById('custName').value;
+        const phone = document.getElementById('custPhone').value;
+        const addr = document.getElementById('custAddr').value;
+
+        if(!size || !name || !phone || !addr) {
+            alert("Please fill all details!");
+            return;
+        }
+
+        const msg = `*🛍️ NEW ORDER confirmed!*%0A%0A*Product:* ${selectedProduct.name}%0A*Price:* ₹${selectedProduct.price}%0A*Size:* ${size}%0A%0A*Customer Details:*%0A*Name:* ${name}%0A*Phone:* ${phone}%0A*Address:* ${addr}`;
+        
+        window.open(`https://wa.me/917736789255?text=${msg}`);
+        closePopup();
+    }
+
+    function upload() {
         const name = document.getElementById('pName').value;
+        const oldPrice = document.getElementById('pOldPrice').value;
         const price = document.getElementById('pPrice').value;
         const cat = document.getElementById('pCat').value;
         const img = document.getElementById('pImg').value;
 
         if(name && price && img) {
-            db.push({ name, price, cat, img });
-            alert("Product Added to Cloud!");
+            db.push({name, oldPrice, price, cat, img});
+            alert("Product Added!");
             document.querySelectorAll('#adminDrawer input').forEach(i => i.value = "");
         }
     }
 
-    function deleteProduct(id) {
-        if(confirm("ഈ പ്രോഡക്റ്റ് ഡിലീറ്റ് ചെയ്യണോ?")) {
-            firebase.database().ref('products/' + id).remove();
-        }
-    }
-
-    function renderAdminList() {
-        const list = document.getElementById('adminList');
-        list.innerHTML = "<h4>Manage Store</h4>";
-        allProducts.forEach(p => {
-            list.innerHTML += `
-                <div style="display:flex; justify-content:space-between; background:#1a1a24; padding:8px; margin-top:5px; border-radius:8px; font-size:12px;">
-                    <span>${p.name}</span>
-                    <button onclick="deleteProduct('${p.id}')" style="color:red; background:none; border:none; cursor:pointer;">Delete</button>
-                </div>`;
-        });
-    }
-
-    function sendOrder() {
-        const phone = document.getElementById('userPhone').value;
-        const addr = document.getElementById('userAddress').value;
-        const size = document.getElementById('orderSize').value;
-        if(!phone || !addr) return alert("Contact details നൽകുക");
-
-        const msg = `*NEW ORDER*%0A*Product:* ${currentItem.name}%0A*Price:* ₹${currentItem.price}%0A*Size:* ${size}%0A*Phone:* ${phone}%0A*Address:* ${addr}`;
-        window.open(`https://wa.me/917736789255?text=${msg}`);
-    }
-
-    // Admin Toggle (5 Clicks on Logo)
     let clicks = 0;
     document.getElementById('logo').onclick = () => {
         clicks++;
@@ -208,8 +180,17 @@
         }
     };
     function toggleAdmin() { document.getElementById('adminDrawer').classList.toggle('open'); }
-    function toggleCart() { document.getElementById('cartOverlay').classList.toggle('show'); }
-
+    
+    function renderAdmin() {
+        const list = document.getElementById('adminList');
+        list.innerHTML = "<h4>Manage Products</h4>";
+        allProducts.forEach(p => {
+            list.innerHTML += `<div style="display:flex; justify-content:space-between; background:#1a1a24; padding:10px; margin-top:5px; border-radius:8px; font-size:12px;">
+                <span>${p.name}</span><span style="color:#ff206e; cursor:pointer" onclick="del('${p.id}')">Remove</span>
+            </div>`;
+        });
+    }
+    function del(id) { if(confirm("Delete this product?")) db.child(id).remove(); }
 </script>
 </body>
 </html>
