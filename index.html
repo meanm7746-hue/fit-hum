@@ -3,325 +3,212 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FIT HUB V5 - PREMIUM STORE</title>
+<title>FIT HUB V5 - CLOUD STORE</title>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
+    /* മുമ്പത്തെ അതേ സ്റ്റൈൽ തന്നെയാണ്, മാറ്റമില്ല */
     *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#07070a; color:#fff; overflow-x:hidden;}
-
-    /* HEADER */
-    header{
-        position:sticky; top:0; display:flex; justify-content:space-between; align-items:center;
-        padding:16px 20px; background:rgba(10,10,15,0.9); backdrop-filter:blur(15px);
-        border-bottom:1px solid rgba(255,255,255,0.1); z-index:1000;
-    }
+    body{font-family:sans-serif; background:#07070a; color:#fff; overflow-x:hidden;}
+    header{position:sticky; top:0; display:flex; justify-content:space-between; align-items:center; padding:16px 20px; background:rgba(10,10,15,0.9); backdrop-filter:blur(15px); border-bottom:1px solid rgba(255,255,255,0.1); z-index:1000;}
     .logo{ font-size:24px; font-weight:900; color:#9d4edd; cursor:pointer; text-shadow:0 0 15px #9d4edd; }
-    
-    .btn-cart{
-        padding:8px 16px; border:none; border-radius:10px; background:#9d4edd;
-        color:#fff; font-weight:700; cursor:pointer; transition:0.3s;
-    }
-    .btn-cart:hover{ background:#c77dff; transform:scale(1.05); }
-
-    /* SEARCH & FILTER */
+    .btn-cart{padding:8px 16px; border:none; border-radius:10px; background:#9d4edd; color:#fff; font-weight:700; cursor:pointer;}
     .controls{ padding:20px; max-width:1200px; margin:auto; display:flex; gap:10px; }
-    input, select, textarea{
-        width:100%; padding:14px; margin:8px 0; border:1px solid rgba(255,255,255,0.1);
-        border-radius:12px; background:#15151e; color:#fff; outline:none;
-    }
-
-    /* GRID & CARDS */
+    input, select, textarea{ width:100%; padding:14px; margin:8px 0; border:1px solid rgba(255,255,255,0.1); border-radius:12px; background:#15151e; color:#fff; outline:none; }
     .wrap{ max-width:1200px; margin:auto; padding:0 20px 40px 20px; }
     .grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:20px; }
-    
-    .card{
-        background:#121218; border-radius:20px; overflow:hidden;
-        transition:0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border:1px solid rgba(255,255,255,0.03);
-    }
+    .card{ background:#121218; border-radius:20px; overflow:hidden; transition:0.3s; border:1px solid rgba(255,255,255,0.03); cursor:pointer;}
     .card:hover{ transform:translateY(-8px); border-color:#9d4edd; }
     .card img{ width:100%; height:280px; object-fit:cover; }
     .info{ padding:15px; }
-    .info h3{ font-size:18px; margin-bottom:5px; }
     .price{ color:#c77dff; font-weight:900; font-size:20px; }
-
-    /* POPUP & PANELS */
-    .popup, .panel{
-        position:fixed; inset:0; background:rgba(0,0,0,0.9);
-        display:none; justify-content:center; align-items:center; z-index:2000;
-    }
-    .popup.show, .panel.show{ display:flex; }
-    .box{
-        max-width:450px; width:90%; background:#111118; padding:20px;
-        border-radius:24px; border:1px solid rgba(255,255,255,0.1);
-    }
+    .panel, .overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.9); display:none; justify-content:center; align-items:center; z-index:2000; }
+    .show{ display:flex !important; }
+    .box{ max-width:450px; width:90%; background:#111118; padding:20px; border-radius:24px; border:1px solid rgba(255,255,255,0.1); }
     .box img{ width:100%; border-radius:15px; margin-bottom:15px; }
-
-    .btn-row{ display:flex; gap:10px; margin-top:15px; }
-    .btn-action{
-        flex:1; padding:12px; border:none; border-radius:12px;
-        background:#1e1e2a; color:#fff; cursor:pointer; font-weight:600;
-    }
+    .admin-drawer{ position:fixed; top:0; right:-100%; width:350px; height:100%; background:#0d0d13; padding:25px; transition:0.4s; z-index:3000; overflow-y:auto; border-left:1px solid #9d4edd; }
+    .admin-drawer.open{ right:0; }
+    .btn-action{ width:100%; padding:12px; border:none; border-radius:12px; background:#1e1e2a; color:#fff; cursor:pointer; font-weight:600; margin-top:10px; }
     .btn-primary{ background:#9d4edd; }
-
-    /* ADMIN PANEL RIGHT SIDE */
-    .admin-drawer{
-        position:fixed; top:0; right:-100%; width:350px; height:100%;
-        background:#0d0d13; padding:25px; transition:0.4s; z-index:3000; overflow-y:auto;
-    }
-    .admin-drawer.show{ right:0; }
-
-    footer{ text-align:center; padding:40px; opacity:0.5; font-size:12px; }
 </style>
 </head>
 <body>
 
 <header>
     <div class="logo" id="logo">FIT HUB V5</div>
-    <button class="btn-cart" onclick="openCart()">Cart (<span id="cartCount">0</span>)</button>
+    <button class="btn-cart" onclick="toggleCart()">Cart (<span id="cartCount">0</span>)</button>
 </header>
 
 <div id="home-view">
     <div class="controls">
-        <input id="search" placeholder="Search products..." oninput="render()">
-        <select id="filter" style="width:150px" onchange="render()">
+        <input id="search" placeholder="Search products..." oninput="renderProducts()">
+        <select id="filter" style="width:120px" onchange="renderProducts()">
             <option value="">All</option>
             <option>Shirt</option>
             <option>Tshirt</option>
             <option>Hoodie</option>
-            <option>Jeans</option>
         </select>
     </div>
-
     <div class="wrap">
-        <div class="grid" id="productGrid"></div>
+        <div class="grid" id="productGrid">
+            <p style="text-align:center; grid-column: 1/-1;">Loading products...</p>
+        </div>
     </div>
 </div>
 
-<div id="product-view" style="display:none; padding:20px; max-width:600px; margin:auto;">
-    <button class="btn-action" onclick="showHome()">⬅ Back to Store</button>
-    <div class="box" style="width:100%; max-width:none; margin-top:20px;">
+<div id="product-view" style="display:none; padding:20px; max-width:500px; margin:auto;">
+    <button class="btn-action" onclick="showHome()">⬅ Back</button>
+    <div class="box" style="width:100%; margin-top:20px;">
         <img id="detailImg">
         <h2 id="detailName"></h2>
-        <div class="price" id="detailPrice"></div>
-        
-        <label>Select Size:</label>
-        <select id="orderSize">
-            <option>S</option><option>M</option><option>L</option><option>XL</option>
-        </select>
-        
+        <p id="detailPrice" class="price"></p>
+        <select id="orderSize"><option>S</option><option>M</option><option>L</option><option>XL</option></select>
         <input id="userPhone" placeholder="WhatsApp Number">
-        <textarea id="userAddress" placeholder="Delivery Address" rows="3"></textarea>
-        
-        <div class="btn-row">
-            <button class="btn-action btn-primary" onclick="placeOrder()">Order on WhatsApp</button>
-            <button class="btn-action" onclick="addToCart(currentProduct.id)">Add to Cart</button>
-        </div>
+        <textarea id="userAddress" placeholder="Full Address"></textarea>
+        <button class="btn-action btn-primary" onclick="sendOrder()">Order via WhatsApp</button>
     </div>
 </div>
 
-<div class="panel" id="cartPanel">
+<div class="overlay" id="cartOverlay">
     <div class="box">
-        <h2>Your Cart</h2>
-        <div id="cartItems" style="margin:15px 0; max-height:300px; overflow-y:auto;"></div>
-        <div class="btn-row">
-            <button class="btn-action" onclick="clearCart()">Clear Cart</button>
-            <button class="btn-action btn-primary" onclick="closeCart()">Close</button>
-        </div>
+        <h3>Your Cart</h3>
+        <div id="cartItems" style="margin:15px 0;"></div>
+        <button class="btn-action" onclick="toggleCart()">Close</button>
     </div>
 </div>
 
-<div class="admin-drawer" id="adminPanel">
-    <h2>Admin Controls</h2>
-    <hr style="opacity:0.1; margin:15px 0;">
-    <input id="newName" placeholder="Product Name">
-    <input id="newPrice" placeholder="Price (₹)">
-    <input id="newCat" placeholder="Category (Shirt, Tshirt...)">
-    <input id="newImg" placeholder="Image URL (Highly Recommended)">
-    <p style="font-size:10px; opacity:0.5; margin-bottom:5px;">Or upload file (Slows down GitHub):</p>
-    <input type="file" id="fileImg" accept="image/*">
-    
-    <button class="btn-action btn-primary" style="width:100%" onclick="addNewProduct()">Add Product</button>
-    
-    <h3 style="margin-top:30px;">Manage Products</h3>
-    <div id="adminProductList"></div>
-    
-    <button class="btn-action" style="width:100%; margin-top:20px;" onclick="toggleAdmin()">Close Admin</button>
+<div class="admin-drawer" id="adminDrawer">
+    <h3>Admin Panel</h3>
+    <input id="pName" placeholder="Product Name">
+    <input id="pPrice" placeholder="Price">
+    <input id="pCat" placeholder="Category">
+    <input id="pImg" placeholder="Image URL">
+    <button class="btn-action btn-primary" onclick="uploadProduct()">Add Product</button>
+    <hr style="margin:20px 0; opacity:0.2;">
+    <div id="adminList"></div>
+    <button class="btn-action" onclick="toggleAdmin()">Close</button>
 </div>
-
-<footer>FIT HUB V5 ULTRA PRO &copy; 2024</footer>
 
 <script>
-    /* --- DATA MANAGEMENT --- */
-    let products = JSON.parse(localStorage.getItem('fithub_products')) || [
-        {id: 1, name: "Premium Royal Shirt", price: "799", cat: "Shirt", img: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500"},
-        {id: 2, name: "Urban Street Tee", price: "499", cat: "Tshirt", img: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500"}
-    ];
-    let cart = JSON.parse(localStorage.getItem('fithub_cart')) || [];
-    let currentProduct = null;
-    let clickCount = 0;
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyC8bcL7IIgoRKQlp8XKYujbFySjCgEcsyY",
+        authDomain: "fit-hub-a55e8.firebaseapp.com",
+        databaseURL: "https://fit-hub-a55e8-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "fit-hub-a55e8",
+        storageBucket: "fit-hub-a55e8.firebasestorage.app",
+        messagingSenderId: "247713917019",
+        appId: "1:247713917019:web:75c620862e6c738d37b77e"
+    };
 
-    function saveToStorage() {
-        localStorage.setItem('fithub_products', JSON.stringify(products));
-        localStorage.setItem('fithub_cart', JSON.stringify(cart));
-        updateCartCount();
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database().ref('products');
+
+    let allProducts = [];
+    let currentItem = null;
+    let cart = [];
+
+    // Real-time Data Fetching
+    db.on('value', (snapshot) => {
+        const data = snapshot.val();
+        allProducts = [];
+        for (let id in data) {
+            allProducts.push({ id, ...data[id] });
+        }
+        renderProducts();
+        renderAdminList();
+    });
+
+    function renderProducts() {
+        const grid = document.getElementById('productGrid');
+        const search = document.getElementById('search').value.toLowerCase();
+        const filter = document.getElementById('filter').value;
+        
+        grid.innerHTML = "";
+        const filtered = allProducts.filter(p => 
+            p.name.toLowerCase().includes(search) && (filter === "" || p.cat === filter)
+        );
+
+        filtered.forEach(p => {
+            grid.innerHTML += `
+                <div class="card" onclick="openDetails('${p.id}')">
+                    <img src="${p.img}">
+                    <div class="info">
+                        <h3>${p.name}</h3>
+                        <div class="price">₹${p.price}</div>
+                    </div>
+                </div>`;
+        });
     }
 
-    /* --- NAVIGATION --- */
+    function openDetails(id) {
+        currentItem = allProducts.find(p => p.id === id);
+        document.getElementById('home-view').style.display = 'none';
+        document.getElementById('product-view').style.display = 'block';
+        document.getElementById('detailImg').src = currentItem.img;
+        document.getElementById('detailName').innerText = currentItem.name;
+        document.getElementById('detailPrice').innerText = "₹" + currentItem.price;
+    }
+
     function showHome() {
         document.getElementById('home-view').style.display = 'block';
         document.getElementById('product-view').style.display = 'none';
     }
 
-    function showProduct(id) {
-        currentProduct = products.find(p => p.id === id);
-        document.getElementById('home-view').style.display = 'none';
-        document.getElementById('product-view').style.display = 'block';
-        
-        document.getElementById('detailImg').src = currentProduct.img;
-        document.getElementById('detailName').innerText = currentProduct.name;
-        document.getElementById('detailPrice').innerText = "₹" + currentProduct.price;
-        window.scrollTo(0,0);
-    }
+    function uploadProduct() {
+        const name = document.getElementById('pName').value;
+        const price = document.getElementById('pPrice').value;
+        const cat = document.getElementById('pCat').value;
+        const img = document.getElementById('pImg').value;
 
-    /* --- RENDERING --- */
-    function render() {
-        const grid = document.getElementById('productGrid');
-        const searchTerm = document.getElementById('search').value.toLowerCase();
-        const filterVal = document.getElementById('filter').value;
-        
-        grid.innerHTML = "";
-        
-        const filtered = products.filter(p => {
-            return p.name.toLowerCase().includes(searchTerm) && (filterVal === "" || p.cat === filterVal);
-        });
-
-        filtered.forEach(p => {
-            grid.innerHTML += `
-                <div class="card" onclick="showProduct(${p.id})">
-                    <img src="${p.img}" loading="lazy">
-                    <div class="info">
-                        <h3>${p.name}</h3>
-                        <div class="price">₹${p.price}</div>
-                    </div>
-                </div>
-            `;
-        });
-        renderAdminList();
-    }
-
-    /* --- CART SYSTEM --- */
-    function addToCart(id) {
-        cart.push(id);
-        saveToStorage();
-        alert("Added to cart!");
-    }
-
-    function updateCartCount() {
-        document.getElementById('cartCount').innerText = cart.length;
-    }
-
-    function openCart() {
-        const list = document.getElementById('cartItems');
-        list.innerHTML = cart.length === 0 ? "Cart is empty" : "";
-        
-        cart.forEach((itemId, index) => {
-            const p = products.find(x => x.id === itemId);
-            if(p) {
-                list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; background:#1a1a24; margin-bottom:5px; border-radius:8px;">
-                    <span>${p.name}</span>
-                    <b>₹${p.price}</b>
-                </div>`;
-            }
-        });
-        document.getElementById('cartPanel').classList.add('show');
-    }
-
-    function closeCart() { document.getElementById('cartPanel').classList.remove('show'); }
-    function clearCart() { cart = []; saveToStorage(); openCart(); }
-
-    /* --- ORDER SYSTEM (WHATSAPP) --- */
-    function placeOrder() {
-        const phone = document.getElementById('userPhone').value;
-        const addr = document.getElementById('userAddress').value;
-        
-        if(!phone || !addr) return alert("Please fill contact details");
-
-        const msg = `*NEW ORDER FROM FIT HUB*%0A` +
-                    `--------------------------%0A` +
-                    `*Product:* ${currentProduct.name}%0A` +
-                    `*Price:* ₹${currentProduct.price}%0A` +
-                    `*Size:* ${document.getElementById('orderSize').value}%0A%0A` +
-                    `*Delivery Details:*%0A` +
-                    `📞 Phone: ${phone}%0A` +
-                    `📍 Address: ${addr}`;
-
-        window.open(`https://wa.me/917736789255?text=${msg}`);
-    }
-
-    /* --- ADMIN LOGIC --- */
-    document.getElementById('logo').onclick = () => {
-        clickCount++;
-        if(clickCount >= 5) {
-            const pw = prompt("Admin Password?");
-            if(pw === "@yadh4u1") toggleAdmin();
-            clickCount = 0;
-        }
-    };
-
-    function toggleAdmin() {
-        document.getElementById('adminPanel').classList.toggle('show');
-    }
-
-    function addNewProduct() {
-        const name = document.getElementById('newName').value;
-        const price = document.getElementById('newPrice').value;
-        const cat = document.getElementById('newCat').value;
-        const imgUrl = document.getElementById('newImg').value;
-        const file = document.getElementById('fileImg').files[0];
-
-        if(!name || !price) return alert("Details missing");
-
-        const add = (imgSrc) => {
-            products.push({ id: Date.now(), name, price, cat, img: imgSrc });
-            saveToStorage();
-            render();
-            alert("Product Added!");
-        };
-
-        if(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => add(e.target.result);
-            reader.readAsDataURL(file);
-        } else {
-            add(imgUrl || "https://via.placeholder.com/300");
+        if(name && price && img) {
+            db.push({ name, price, cat, img });
+            alert("Product Added to Cloud!");
+            document.querySelectorAll('#adminDrawer input').forEach(i => i.value = "");
         }
     }
 
     function deleteProduct(id) {
-        if(confirm("Delete this product?")) {
-            products = products.filter(p => p.id !== id);
-            saveToStorage();
-            render();
+        if(confirm("ഈ പ്രോഡക്റ്റ് ഡിലീറ്റ് ചെയ്യണോ?")) {
+            firebase.database().ref('products/' + id).remove();
         }
     }
 
     function renderAdminList() {
-        const list = document.getElementById('adminProductList');
-        list.innerHTML = "";
-        products.forEach(p => {
+        const list = document.getElementById('adminList');
+        list.innerHTML = "<h4>Manage Store</h4>";
+        allProducts.forEach(p => {
             list.innerHTML += `
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:#1a1a24; padding:5px; border-radius:8px;">
-                    <img src="${p.img}" style="width:40px; height:40px; object-fit:cover; border-radius:5px;">
-                    <span style="flex:1; font-size:12px;">${p.name}</span>
-                    <button onclick="deleteProduct(${p.id})" style="background:red; color:white; border:none; padding:5px; border-radius:5px; cursor:pointer;">X</button>
-                </div>
-            `;
+                <div style="display:flex; justify-content:space-between; background:#1a1a24; padding:8px; margin-top:5px; border-radius:8px; font-size:12px;">
+                    <span>${p.name}</span>
+                    <button onclick="deleteProduct('${p.id}')" style="color:red; background:none; border:none; cursor:pointer;">Delete</button>
+                </div>`;
         });
     }
 
-    // Init
-    updateCartCount();
-    render();
+    function sendOrder() {
+        const phone = document.getElementById('userPhone').value;
+        const addr = document.getElementById('userAddress').value;
+        const size = document.getElementById('orderSize').value;
+        if(!phone || !addr) return alert("Contact details നൽകുക");
+
+        const msg = `*NEW ORDER*%0A*Product:* ${currentItem.name}%0A*Price:* ₹${currentItem.price}%0A*Size:* ${size}%0A*Phone:* ${phone}%0A*Address:* ${addr}`;
+        window.open(`https://wa.me/917736789255?text=${msg}`);
+    }
+
+    // Admin Toggle (5 Clicks on Logo)
+    let clicks = 0;
+    document.getElementById('logo').onclick = () => {
+        clicks++;
+        if(clicks >= 5) {
+            if(prompt("Password?") === "@yadh4u1") toggleAdmin();
+            clicks = 0;
+        }
+    };
+    function toggleAdmin() { document.getElementById('adminDrawer').classList.toggle('open'); }
+    function toggleCart() { document.getElementById('cartOverlay').classList.toggle('show'); }
 
 </script>
 </body>
