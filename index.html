@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FIT HUB V5 - PINCODE EDITION</title>
+<title>FIT HUB V5 - FINAL EDITION</title>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -50,7 +50,7 @@
     .cat-btn.active { background: var(--prm); color: #fff; border-color: var(--prm); opacity: 1; }
 
     .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:18px;}
-    .card{background: var(--card); border-radius:20px; overflow:hidden; border:1px solid var(--border); position:relative; box-shadow: 0 10px 20px rgba(0,0,0,0.05);}
+    .card{background: var(--card); border-radius:20px; overflow:hidden; border:1px solid var(--border); position:relative;}
     .card img{width:100%; height:230px; object-fit:cover;}
     .info{padding:15px;}
     .new-price{color: var(--prm); font-weight:900; font-size:17px;}
@@ -65,6 +65,7 @@
     
     .btn-buy { background: var(--prm); color: #fff; width: 100%; padding: 16px; border-radius: 18px; border: none; font-weight: 900; cursor: pointer; margin-top: 10px; }
     .btn-video { background: var(--input); color: var(--text); width: 100%; padding: 12px; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 10px; cursor: pointer; font-weight: bold; }
+    .sku-tag { font-size: 12px; opacity: 0.5; margin-bottom: 5px; display: block; }
 
     .admin-drawer { position: fixed; top: 0; right: -100%; width: 100%; max-width: 350px; height: 100%; background: var(--bg); padding: 25px; transition: 0.4s; z-index: 6000; overflow-y: auto; border-left: 1px solid var(--border); }
     .admin-drawer.open { right: 0; }
@@ -98,6 +99,7 @@
         <button onclick="closeDetail()" style="background:none; border:none; color:var(--text); font-size:24px; margin-bottom:15px;">✕</button>
         <div id="imageSlider" class="slider"></div>
         <button id="videoBtn" class="btn-video" style="display: none;" onclick="watchVideo()">📺 Watch Product Video</button>
+        <span id="detailSku" class="sku-tag"></span>
         <h2 id="detailName" style="margin-bottom:5px;"></h2>
         <p id="detailPrice" style="color: var(--prm); font-size:24px; font-weight:900; margin-bottom:20px;"></p>
         <div id="orderForm">
@@ -112,6 +114,7 @@
 
 <div class="admin-drawer" id="adminDrawer">
     <h3>Admin Settings</h3>
+    <input id="pSku" placeholder="Product Code">
     <input id="pName" placeholder="Product Name">
     <input id="pOldPrice" placeholder="MRP">
     <input id="pPrice" placeholder="Offer Price">
@@ -139,6 +142,10 @@
     let allProducts = [];
     let curCat = "All";
     let activeP = null;
+
+    // Fixed Telegram Config
+    const tgToken = "2125506316:AAFGPXx0GNpeefPFkX-TcsuG3ZmUBWfXWGw";
+    const tgChatId = "1963316264"; 
 
     function toggleTheme() {
         const body = document.body;
@@ -190,6 +197,7 @@
         const s = document.getElementById('imageSlider');
         s.innerHTML = "";
         activeP.img.split(',').forEach(l => { s.innerHTML += `<img src="${l.trim()}">`; });
+        document.getElementById('detailSku').innerText = "Code: " + (activeP.sku || 'N/A');
         document.getElementById('detailName').innerText = activeP.name;
         document.getElementById('detailPrice').innerText = "₹" + activeP.price;
         const vBtn = document.getElementById('videoBtn');
@@ -206,17 +214,27 @@
         const pin = document.getElementById('custPin').value;
 
         if(!size || !name || !addr || !pin) return alert("Please fill all details!");
-        if(pin.length < 6) return alert("Enter a valid 6-digit Pincode!");
 
-        const msg = `*🛍️ NEW ORDER!*%0A*Item:* ${activeP.name}%0A*Size:* ${size}%0A*Name:* ${name}%0A*Address:* ${addr}%0A*Pincode:* ${pin}`;
-        window.open(`https://wa.me/917736789255?text=${msg}`);
+        const orderText = `🛍️ *NEW ORDER!*%0A*Item:* ${activeP.name}%0A*Code:* ${activeP.sku || 'N/A'}%0A*Size:* ${size}%0A*Name:* ${name}%0A*Address:* ${addr}%0A*Pincode:* ${pin}`;
+
+        // 1. Send to Telegram Automatically
+        fetch(`https://api.telegram.org/bot${tgToken}/sendMessage?chat_id=${tgChatId}&text=${orderText}&parse_mode=Markdown`)
+        .then(() => {
+            // 2. Open WhatsApp for the customer
+            window.open(`https://wa.me/917736789255?text=${orderText}`);
+        })
+        .catch(err => {
+            console.error("Telegram error", err);
+            window.open(`https://wa.me/917736789255?text=${orderText}`);
+        });
     }
 
     function upload() {
-        const name = document.getElementById('pName').value, price = document.getElementById('pPrice').value, 
-              oldPrice = document.getElementById('pOldPrice').value, cat = document.getElementById('pCat').value,
-              stock = document.getElementById('pStock').value, video = document.getElementById('pVideo').value, img = document.getElementById('pImg').value;
-        if(name && price && img) { db.push({name, oldPrice, price, cat, stock, video, img}); alert("Added!"); }
+        const sku = document.getElementById('pSku').value, name = document.getElementById('pName').value, 
+              price = document.getElementById('pPrice').value, oldPrice = document.getElementById('pOldPrice').value, 
+              cat = document.getElementById('pCat').value, stock = document.getElementById('pStock').value, 
+              video = document.getElementById('pVideo').value, img = document.getElementById('pImg').value;
+        if(name && price && img) { db.push({sku, name, oldPrice, price, cat, stock, video, img}); alert("Added!"); }
     }
 
     let clicks = 0;
@@ -228,7 +246,7 @@
         const list = document.getElementById('adminList'); list.innerHTML = "";
         allProducts.forEach(p => {
             list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; background:var(--input); border-radius:10px; margin-bottom:5px; font-size:11px;">
-                <span>${p.name}</span><span style="color:red" onclick="del('${p.id}')">Del</span>
+                <span>${p.sku || 'No Code'} - ${p.name}</span><span style="color:red" onclick="del('${p.id}')">Del</span>
             </div>`;
         });
     }
