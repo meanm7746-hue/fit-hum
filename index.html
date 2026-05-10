@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FIT HUB V5 - FINAL EDITION</title>
+<title>FIT HUB V5 - UPDATED BOT</title>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -143,8 +143,8 @@
     let curCat = "All";
     let activeP = null;
 
-    // Fixed Telegram Config
-    const tgToken = "2125506316:AAFGPXx0GNpeefPFkX-TcsuG3ZmUBWfXWGw";
+    // Updated Telegram Config
+    const tgToken = "8685997452:AAFLx6-5XA7lcl32kqBt3iUC1alhMYvrQKI";
     const tgChatId = "1963316264"; 
 
     function toggleTheme() {
@@ -217,14 +217,11 @@
 
         const orderText = `🛍️ *NEW ORDER!*%0A*Item:* ${activeP.name}%0A*Code:* ${activeP.sku || 'N/A'}%0A*Size:* ${size}%0A*Name:* ${name}%0A*Address:* ${addr}%0A*Pincode:* ${pin}`;
 
-        // 1. Send to Telegram Automatically
         fetch(`https://api.telegram.org/bot${tgToken}/sendMessage?chat_id=${tgChatId}&text=${orderText}&parse_mode=Markdown`)
         .then(() => {
-            // 2. Open WhatsApp for the customer
             window.open(`https://wa.me/917736789255?text=${orderText}`);
         })
         .catch(err => {
-            console.error("Telegram error", err);
             window.open(`https://wa.me/917736789255?text=${orderText}`);
         });
     }
