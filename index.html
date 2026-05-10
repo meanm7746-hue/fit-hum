@@ -3,105 +3,116 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FIT HUB V5 - ADVANCED STORE</title>
+<title>FIT HUB V5 - MODERN EDITION</title>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:sans-serif; background:#07070a; color:#fff; -webkit-tap-highlight-color: transparent;}
+    :root { --prm: #9d4edd; --bg: #07070a; --card: #121218; }
+    *{margin:0;padding:0;box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
     
-    header{position:sticky; top:0; display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background:rgba(10,10,15,0.9); backdrop-filter:blur(10px); border-bottom:1px solid #333; z-index:1000;}
-    .logo{font-size:22px; font-weight:900; color:#9d4edd; cursor:pointer;}
-    
-    .wrap{max-width:1200px; margin:auto; padding:20px;}
-    .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:15px;}
-    
-    .card{background:#121218; border-radius:15px; overflow:hidden; position:relative; border:1px solid #222; cursor:pointer;}
-    .badge{position:absolute; top:10px; left:10px; background:#ff206e; color:#fff; padding:4px 8px; border-radius:5px; font-size:11px; font-weight:bold; z-index:10;}
-    
-    .card img{width:100%; height:220px; object-fit:cover;}
-    .info{padding:12px;}
-    .old-price{text-decoration:line-through; color:#888; font-size:13px; margin-right:5px;}
-    .new-price{color:#c77dff; font-weight:900; font-size:16px;}
+    body{font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color:#fff; overflow-x: hidden;}
 
-    /* DETAIL PAGE VIEW */
-    #detail-view {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: #07070a; display: none; z-index: 2000; overflow-y: auto;
-    }
-    .detail-container { max-width: 500px; margin: auto; padding: 20px; }
-    
-    /* IMAGE SLIDER */
-    .slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: 20px; gap: 10px; margin-bottom: 15px; }
-    .slider img { width: 100%; flex-shrink: 0; scroll-snap-align: start; height: 400px; object-fit: cover; border: 1px solid #333; }
-    .slider::-webkit-scrollbar { display: none; }
+    /* HEADER */
+    header{position:sticky; top:0; display:flex; justify-content:center; align-items:center; padding:18px; background:rgba(7,7,10,0.8); backdrop-filter:blur(20px); border-bottom:1px solid rgba(255,255,255,0.05); z-index:1000;}
+    .logo{font-size:24px; font-weight:900; letter-spacing: 2px; color: var(--prm); text-shadow: 0 0 15px rgba(157,78,221,0.5);}
 
-    .action-row { display: flex; gap: 10px; margin-bottom: 15px; }
-    .back-btn, .share-btn { flex: 1; padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; }
-    .back-btn { background: #1a1a24; color: #fff; }
-    .share-btn { background: #25d366; color: #fff; }
-    
-    input, textarea, select, .btn-main { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: none; outline: none; }
-    input, textarea { background: #1a1a24; color: #fff; border: 1px solid #333; }
-    .btn-main { background: #9d4edd; color: #fff; font-weight: bold; cursor: pointer; font-size: 16px; }
+    .wrap{max-width:1200px; margin:auto; padding:20px 20px 100px 20px; animation: fadeIn 0.5s ease-in;}
 
-    .admin-drawer { position: fixed; top: 0; right: -100%; width: 320px; height: 100%; background: #0d0d13; padding: 20px; transition: 0.4s; z-index: 3000; border-left: 2px solid #9d4edd; overflow-y: auto; }
+    /* MODERN SEARCH */
+    .search-box{background: var(--card); border: 1px solid #222; padding: 14px; border-radius: 15px; width: 100%; color: #fff; margin-bottom: 20px; outline: none; transition: 0.3s;}
+    .search-box:focus{border-color: var(--prm); box-shadow: 0 0 10px rgba(157,78,221,0.2);}
+
+    /* CATEGORY PILLS */
+    .cat-scroll { display: flex; overflow-x: auto; gap: 12px; margin-bottom: 25px; scrollbar-width: none; }
+    .cat-btn { background: var(--card); color: #888; padding: 10px 22px; border-radius: 30px; border: 1px solid #222; cursor: pointer; white-space: nowrap; font-size: 13px; transition: 0.3s; }
+    .cat-btn.active { background: var(--prm); color: #fff; border-color: var(--prm); transform: scale(1.05); box-shadow: 0 5px 15px rgba(157,78,221,0.3); }
+
+    /* PRODUCT CARDS */
+    .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:18px;}
+    .card{background: var(--card); border-radius:20px; overflow:hidden; position:relative; border:1px solid rgba(255,255,255,0.03); transition: 0.3s;}
+    .card:active{transform: scale(0.95);}
+    .badge{position:absolute; top:12px; left:12px; background:#ff206e; color:#fff; padding:4px 10px; border-radius:8px; font-size:10px; font-weight:900; z-index:10;}
+    .card img{width:100%; height:230px; object-fit:cover;}
+    .info{padding:15px;}
+    .info h4{font-size: 14px; margin-bottom: 5px; font-weight: 500; opacity: 0.9;}
+    .old-price{text-decoration:line-through; color:#555; font-size:12px; margin-right:5px;}
+    .new-price{color: var(--prm); font-weight:900; font-size:17px;}
+
+    /* BOTTOM NAV */
+    .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(20,20,30,0.8); backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 12px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); z-index: 4000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .nav-item { color: #888; font-size: 20px; cursor: pointer; transition: 0.3s; }
+    .nav-item.active { color: var(--prm); }
+
+    /* DETAIL VIEW */
+    #detail-view { position: fixed; inset: 0; background: var(--bg); display: none; z-index: 5000; overflow-y: auto; animation: slideUp 0.4s ease-out; }
+    .detail-container { max-width: 500px; margin: auto; padding: 25px; }
+    .slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: 25px; gap: 10px; margin-bottom: 20px; scrollbar-width: none; }
+    .slider img { width: 100%; flex-shrink: 0; scroll-snap-align: start; height: 450px; object-fit: cover; }
+    
+    .btn-buy { background: var(--prm); color: #fff; width: 100%; padding: 16px; border-radius: 18px; border: none; font-weight: 900; font-size: 16px; cursor: pointer; box-shadow: 0 10px 20px rgba(157,78,221,0.3); }
+
+    @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+    @keyframes slideUp { from{transform: translateY(100%);} to{transform: translateY(0);} }
+
+    /* ADMIN PANEL */
+    .admin-drawer { position: fixed; top: 0; right: -100%; width: 100%; max-width: 350px; height: 100%; background: #0d0d13; padding: 25px; transition: 0.4s; z-index: 6000; border-left: 1px solid var(--prm); overflow-y: auto; }
     .admin-drawer.open { right: 0; }
+    input, select, textarea { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid #222; background: #1a1a24; color: #fff; outline: none; }
 </style>
 </head>
 <body>
 
-<header>
-    <div class="logo" id="logo">FIT HUB V5</div>
-</header>
+<header><div class="logo">FIT HUB</div></header>
 
 <div id="home-view" class="wrap">
-    <input type="text" id="search" placeholder="Search clothes..." oninput="render()" style="background:#15151e; color:#fff; padding:15px; border-radius:12px; width:100%; border:1px solid #222; margin-bottom:20px;">
+    <input type="text" id="search" class="search-box" placeholder="Search premium wear..." oninput="render()">
+    
+    <div class="cat-scroll" id="catTabs">
+        <button class="cat-btn active" onclick="filterCat('All', this)">All</button>
+        <button class="cat-btn" onclick="filterCat('Shirt', this)">Shirts</button>
+        <button class="cat-btn" onclick="filterCat('Tshirt', this)">T-shirts</button>
+        <button class="cat-btn" onclick="filterCat('Hoodie', this)">Hoodies</button>
+    </div>
+
     <div class="grid" id="productGrid"></div>
+</div>
+
+<div class="bottom-nav">
+    <div class="nav-item active" onclick="location.reload()">🏠</div>
+    <div class="nav-item" onclick="document.getElementById('search').focus()">🔍</div>
+    <div class="nav-item" id="adminTrigger">⚙️</div>
 </div>
 
 <div id="detail-view">
     <div class="detail-container">
-        <div class="action-row">
-            <button class="back-btn" onclick="closeDetail()">⬅ Back</button>
-            <button class="share-btn" onclick="shareProduct()">WhatsApp Share 🔗</button>
-        </div>
-
+        <button onclick="closeDetail()" style="background:none; border:none; color:#fff; font-size:24px; margin-bottom:15px; cursor:pointer;">✕</button>
         <div id="imageSlider" class="slider"></div>
-        <p style="text-align: center; font-size: 10px; color: #555; margin-bottom: 10px;">Swipe for more images ⮕</p>
-
-        <h2 id="detailName" style="color:#9d4edd; margin-bottom: 5px;"></h2>
-        <p id="detailPrice" style="color:#c77dff; font-weight:bold; font-size:22px; margin-bottom:20px;"></p>
+        <h2 id="detailName" style="margin-bottom:5px;"></h2>
+        <p id="detailPrice" style="color: var(--prm); font-size:24px; font-weight:900; margin-bottom:20px;"></p>
         
-        <div style="background:#121218; padding:20px; border-radius:15px; border: 1px solid #222;">
-            <select id="orderSize">
-                <option value="">Choose Size</option>
-                <option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option>
-            </select>
-            <input type="text" id="custName" placeholder="Full Name">
-            <input type="tel" id="custPhone" placeholder="Mobile Number">
-            <textarea id="custAddr" placeholder="Complete Address" rows="3"></textarea>
-            <button class="btn-main" onclick="sendOrder()">Confirm Order via WhatsApp</button>
-        </div>
+        <select id="orderSize"><option value="">Select Size</option><option>S</option><option>M</option><option>L</option><option>XL</option></select>
+        <input type="text" id="custName" placeholder="Full Name">
+        <textarea id="custAddr" placeholder="Delivery Address" rows="3"></textarea>
+        <button class="btn-buy" onclick="sendOrder()">ORDER ON WHATSAPP</button>
     </div>
 </div>
 
 <div class="admin-drawer" id="adminDrawer">
-    <h3>Add Product</h3>
-    <input id="pName" placeholder="Name">
+    <h3 style="margin-bottom:20px;">Admin Panel</h3>
+    <input id="pName" placeholder="Product Name">
     <input id="pOldPrice" placeholder="MRP">
     <input id="pPrice" placeholder="Offer Price">
-    <p style="font-size: 10px; color: #888;">For multiple images, separate links with a comma (,)</p>
-    <textarea id="pImg" placeholder="Image Link 1, Link 2..." rows="4"></textarea>
-    <button class="btn-main" onclick="upload()">Save Product</button>
-    <hr style="opacity:0.1; margin:20px 0;">
-    <div id="adminList"></div>
-    <button onclick="toggleAdmin()">Close</button>
+    <select id="pCat"><option>Shirt</option><option>Tshirt</option><option>Hoodie</option></select>
+    <textarea id="pImg" placeholder="Image Link(s) - Use comma for multiple" rows="3"></textarea>
+    <button class="btn-buy" onclick="upload()">SAVE PRODUCT</button>
+    <div id="adminList" style="margin-top:20px;"></div>
+    <button onclick="toggleAdmin()" style="margin-top:20px; opacity:0.5; background:none; border:none; color:#fff; width:100%;">Close</button>
 </div>
 
 <script>
+    // Firebase Setup
     const firebaseConfig = {
         apiKey: "AIzaSyC8bcL7IIgoRKQlp8XKYujbFySjCgEcsyY",
         authDomain: "fit-hub-a55e8.firebaseapp.com",
@@ -114,7 +125,8 @@
     const db = firebase.database().ref('products');
 
     let allProducts = [];
-    let activeProduct = null;
+    let activeP = null;
+    let curCat = "All";
 
     db.on('value', snap => {
         const data = snap.val();
@@ -124,18 +136,27 @@
         renderAdmin();
     });
 
+    function filterCat(cat, btn) {
+        curCat = cat;
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render();
+    }
+
     function render() {
         const grid = document.getElementById('productGrid');
         const q = document.getElementById('search').value.toLowerCase();
         grid.innerHTML = "";
-        allProducts.filter(p => p.name.toLowerCase().includes(q)).forEach(p => {
-            let discount = Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
-            // Show first image in grid
-            let firstImg = p.img.split(',')[0].trim();
+        
+        allProducts.filter(p => {
+            return p.name.toLowerCase().includes(q) && (curCat === "All" || p.cat === curCat);
+        }).forEach(p => {
+            let disc = Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
+            let img = p.img.split(',')[0].trim();
             grid.innerHTML += `
                 <div class="card" onclick="openDetail('${p.id}')">
-                    ${discount > 0 ? `<div class="badge">${discount}% OFF</div>` : ''}
-                    <img src="${firstImg}">
+                    ${disc > 0 ? `<div class="badge">${disc}% OFF</div>` : ''}
+                    <img src="${img}">
                     <div class="info">
                         <h4>${p.name}</h4>
                         <span class="old-price">₹${p.oldPrice}</span>
@@ -146,69 +167,51 @@
     }
 
     function openDetail(id) {
-        activeProduct = allProducts.find(x => x.id === id);
-        document.getElementById('home-view').style.display = "none";
+        activeP = allProducts.find(x => x.id === id);
         document.getElementById('detail-view').style.display = "block";
-        
-        // Setup Slider
-        const slider = document.getElementById('imageSlider');
-        slider.innerHTML = "";
-        let imgList = activeProduct.img.split(',');
-        imgList.forEach(link => {
-            slider.innerHTML += `<img src="${link.trim()}">`;
-        });
-
-        document.getElementById('detailName').innerText = activeProduct.name;
-        document.getElementById('detailPrice').innerText = "₹" + activeProduct.price;
-        window.scrollTo(0,0);
+        const s = document.getElementById('imageSlider');
+        s.innerHTML = "";
+        activeP.img.split(',').forEach(l => { s.innerHTML += `<img src="${l.trim()}">`; });
+        document.getElementById('detailName').innerText = activeP.name;
+        document.getElementById('detailPrice').innerText = "₹" + activeP.price;
     }
 
-    function shareProduct() {
-        const text = `Hey! Check out this *${activeProduct.name}* at FIT HUB V5.%0AOffer Price: *₹${activeProduct.price}*%0AView here: ${window.location.href}`;
-        window.open(`https://wa.me/?text=${text}`);
-    }
-
-    function closeDetail() {
-        document.getElementById('home-view').style.display = "block";
-        document.getElementById('detail-view').style.display = "none";
-    }
+    function closeDetail() { document.getElementById('detail-view').style.display = "none"; }
 
     function sendOrder() {
         const size = document.getElementById('orderSize').value;
         const name = document.getElementById('custName').value;
-        const phone = document.getElementById('custPhone').value;
         const addr = document.getElementById('custAddr').value;
-
-        if(!size || !name || !phone || !addr) return alert("Fill all details!");
-
-        const msg = `*🛍️ NEW ORDER confirmed!*%0A%0A*Product:* ${activeProduct.name}%0A*Price:* ₹${activeProduct.price}%0A*Size:* ${size}%0A%0A*Customer Info:*%0A*Name:* ${name}%0A*Phone:* ${phone}%0A*Address:* ${addr}`;
+        if(!size || !name || !addr) return alert("Fill all details!");
+        const msg = `*🛍️ NEW ORDER!*%0A%0A*Item:* ${activeP.name}%0A*Price:* ₹${activeP.price}%0A*Size:* ${size}%0A%0A*Address:* ${name}, ${addr}`;
         window.open(`https://wa.me/917736789255?text=${msg}`);
     }
 
     function upload() {
         const name = document.getElementById('pName').value;
-        const oldPrice = document.getElementById('pOldPrice').value;
+        const old = document.getElementById('pOldPrice').value;
         const price = document.getElementById('pPrice').value;
+        const cat = document.getElementById('pCat').value;
         const img = document.getElementById('pImg').value;
         if(name && price && img) {
-            db.push({name, oldPrice, price, img});
+            db.push({name, oldPrice: old, price, cat, img});
             alert("Added!");
-            document.querySelectorAll('#adminDrawer input, #adminDrawer textarea').forEach(i => i.value = "");
         }
     }
 
+    // ADMIN TRIGGER (Hidden Trick)
     let clicks = 0;
-    document.getElementById('logo').onclick = () => {
+    document.getElementById('adminTrigger').onclick = () => {
         clicks++;
-        if(clicks >= 5) { if(prompt("Pass?") === "@yadh4u1") toggleAdmin(); clicks = 0; }
+        if(clicks >= 5) { if(prompt("Password?") === "@yadh4u1") toggleAdmin(); clicks = 0; }
     };
     function toggleAdmin() { document.getElementById('adminDrawer').classList.toggle('open'); }
     function renderAdmin() {
         const list = document.getElementById('adminList');
         list.innerHTML = "";
         allProducts.forEach(p => {
-            list.innerHTML += `<div style="display:flex; justify-content:space-between; margin-top:5px; background:#1a1a24; padding:8px; border-radius:5px;">
-                <span style="font-size:12px;">${p.name}</span><span style="color:red; cursor:pointer;" onclick="del('${p.id}')">Del</span>
+            list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; background:#1a1a24; border-radius:10px; margin-bottom:5px; font-size:12px;">
+                <span>${p.name}</span><span style="color:red" onclick="del('${p.id}')">Delete</span>
             </div>`;
         });
     }
