@@ -3,63 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FIT HUB V5 - MODERN EDITION</title>
+<title>FIT HUB V5 - STOCK EDITION</title>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
-    :root { --prm: #9d4edd; --bg: #07070a; --card: #121218; }
+    :root { --prm: #9d4edd; --bg: #07070a; --card: #121218; --green: #25d366; --red: #ff206e; --orange: #ff9f1c; }
     *{margin:0;padding:0;box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
     
-    body{font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color:#fff; overflow-x: hidden;}
+    body{font-family: 'Segoe UI', sans-serif; background: var(--bg); color:#fff; overflow-x: hidden;}
 
-    /* HEADER */
-    header{position:sticky; top:0; display:flex; justify-content:center; align-items:center; padding:18px; background:rgba(7,7,10,0.8); backdrop-filter:blur(20px); border-bottom:1px solid rgba(255,255,255,0.05); z-index:1000;}
-    .logo{font-size:24px; font-weight:900; letter-spacing: 2px; color: var(--prm); text-shadow: 0 0 15px rgba(157,78,221,0.5);}
+    header{position:sticky; top:0; display:flex; justify-content:center; padding:18px; background:rgba(7,7,10,0.8); backdrop-filter:blur(20px); border-bottom:1px solid rgba(255,255,255,0.05); z-index:1000;}
+    .logo{font-size:24px; font-weight:900; color: var(--prm); text-shadow: 0 0 15px rgba(157,78,221,0.5);}
 
-    .wrap{max-width:1200px; margin:auto; padding:20px 20px 100px 20px; animation: fadeIn 0.5s ease-in;}
+    .wrap{max-width:1200px; margin:auto; padding:20px 20px 100px 20px;}
 
-    /* MODERN SEARCH */
-    .search-box{background: var(--card); border: 1px solid #222; padding: 14px; border-radius: 15px; width: 100%; color: #fff; margin-bottom: 20px; outline: none; transition: 0.3s;}
-    .search-box:focus{border-color: var(--prm); box-shadow: 0 0 10px rgba(157,78,221,0.2);}
-
-    /* CATEGORY PILLS */
+    /* SEARCH & CAT */
+    .search-box{background: var(--card); border: 1px solid #222; padding: 14px; border-radius: 15px; width: 100%; color: #fff; margin-bottom: 20px; outline: none;}
     .cat-scroll { display: flex; overflow-x: auto; gap: 12px; margin-bottom: 25px; scrollbar-width: none; }
-    .cat-btn { background: var(--card); color: #888; padding: 10px 22px; border-radius: 30px; border: 1px solid #222; cursor: pointer; white-space: nowrap; font-size: 13px; transition: 0.3s; }
-    .cat-btn.active { background: var(--prm); color: #fff; border-color: var(--prm); transform: scale(1.05); box-shadow: 0 5px 15px rgba(157,78,221,0.3); }
+    .cat-btn { background: var(--card); color: #888; padding: 10px 22px; border-radius: 30px; border: 1px solid #222; cursor: pointer; white-space: nowrap; font-size: 13px; }
+    .cat-btn.active { background: var(--prm); color: #fff; border-color: var(--prm); }
 
     /* PRODUCT CARDS */
     .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:18px;}
-    .card{background: var(--card); border-radius:20px; overflow:hidden; position:relative; border:1px solid rgba(255,255,255,0.03); transition: 0.3s;}
-    .card:active{transform: scale(0.95);}
-    .badge{position:absolute; top:12px; left:12px; background:#ff206e; color:#fff; padding:4px 10px; border-radius:8px; font-size:10px; font-weight:900; z-index:10;}
+    .card{background: var(--card); border-radius:20px; overflow:hidden; border:1px solid rgba(255,255,255,0.03); position:relative;}
+    .badge{position:absolute; top:12px; left:12px; background:var(--red); color:#fff; padding:4px 10px; border-radius:8px; font-size:10px; font-weight:900; z-index:10;}
+    
+    /* STOCK INDICATOR */
+    .stock-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+    .stock-text { font-size: 11px; font-weight: bold; margin-bottom: 5px; display: block; }
+    .in-stock { color: var(--green); }
+    .lim-stock { color: var(--orange); }
+    .no-stock { color: var(--red); opacity: 0.6; }
+
     .card img{width:100%; height:230px; object-fit:cover;}
     .info{padding:15px;}
-    .info h4{font-size: 14px; margin-bottom: 5px; font-weight: 500; opacity: 0.9;}
-    .old-price{text-decoration:line-through; color:#555; font-size:12px; margin-right:5px;}
     .new-price{color: var(--prm); font-weight:900; font-size:17px;}
 
     /* BOTTOM NAV */
-    .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(20,20,30,0.8); backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 12px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); z-index: 4000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    .nav-item { color: #888; font-size: 20px; cursor: pointer; transition: 0.3s; }
-    .nav-item.active { color: var(--prm); }
+    .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(20,20,30,0.8); backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 12px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); z-index: 4000; }
+    .nav-item { color: #888; font-size: 20px; cursor: pointer; }
 
     /* DETAIL VIEW */
-    #detail-view { position: fixed; inset: 0; background: var(--bg); display: none; z-index: 5000; overflow-y: auto; animation: slideUp 0.4s ease-out; }
+    #detail-view { position: fixed; inset: 0; background: var(--bg); display: none; z-index: 5000; overflow-y: auto; }
     .detail-container { max-width: 500px; margin: auto; padding: 25px; }
-    .slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: 25px; gap: 10px; margin-bottom: 20px; scrollbar-width: none; }
-    .slider img { width: 100%; flex-shrink: 0; scroll-snap-align: start; height: 450px; object-fit: cover; }
+    .slider { display: flex; overflow-x: auto; border-radius: 25px; gap: 10px; margin-bottom: 20px; scrollbar-width: none; }
+    .slider img { width: 100%; flex-shrink: 0; height: 450px; object-fit: cover; }
     
-    .btn-buy { background: var(--prm); color: #fff; width: 100%; padding: 16px; border-radius: 18px; border: none; font-weight: 900; font-size: 16px; cursor: pointer; box-shadow: 0 10px 20px rgba(157,78,221,0.3); }
-
-    @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-    @keyframes slideUp { from{transform: translateY(100%);} to{transform: translateY(0);} }
+    .btn-buy { background: var(--prm); color: #fff; width: 100%; padding: 16px; border-radius: 18px; border: none; font-weight: 900; cursor: pointer; }
+    .btn-disabled { background: #333; color: #888; cursor: not-allowed; }
 
     /* ADMIN PANEL */
-    .admin-drawer { position: fixed; top: 0; right: -100%; width: 100%; max-width: 350px; height: 100%; background: #0d0d13; padding: 25px; transition: 0.4s; z-index: 6000; border-left: 1px solid var(--prm); overflow-y: auto; }
+    .admin-drawer { position: fixed; top: 0; right: -100%; width: 100%; max-width: 350px; height: 100%; background: #0d0d13; padding: 25px; transition: 0.4s; z-index: 6000; overflow-y: auto; }
     .admin-drawer.open { right: 0; }
-    input, select, textarea { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid #222; background: #1a1a24; color: #fff; outline: none; }
+    input, select, textarea { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; background: #1a1a24; color: #fff; border: 1px solid #222; }
 </style>
 </head>
 <body>
@@ -67,52 +65,55 @@
 <header><div class="logo">FIT HUB</div></header>
 
 <div id="home-view" class="wrap">
-    <input type="text" id="search" class="search-box" placeholder="Search premium wear..." oninput="render()">
-    
+    <input type="text" id="search" class="search-box" placeholder="Search clothes..." oninput="render()">
     <div class="cat-scroll" id="catTabs">
         <button class="cat-btn active" onclick="filterCat('All', this)">All</button>
         <button class="cat-btn" onclick="filterCat('Shirt', this)">Shirts</button>
         <button class="cat-btn" onclick="filterCat('Tshirt', this)">T-shirts</button>
-        <button class="cat-btn" onclick="filterCat('Hoodie', this)">Hoodies</button>
     </div>
-
     <div class="grid" id="productGrid"></div>
 </div>
 
 <div class="bottom-nav">
-    <div class="nav-item active" onclick="location.reload()">🏠</div>
-    <div class="nav-item" onclick="document.getElementById('search').focus()">🔍</div>
+    <div class="nav-item" onclick="location.reload()">🏠</div>
     <div class="nav-item" id="adminTrigger">⚙️</div>
 </div>
 
 <div id="detail-view">
     <div class="detail-container">
-        <button onclick="closeDetail()" style="background:none; border:none; color:#fff; font-size:24px; margin-bottom:15px; cursor:pointer;">✕</button>
+        <button onclick="closeDetail()" style="background:none; border:none; color:#fff; font-size:24px; margin-bottom:15px;">✕</button>
         <div id="imageSlider" class="slider"></div>
+        <div id="detailStock" style="margin-bottom: 10px;"></div>
         <h2 id="detailName" style="margin-bottom:5px;"></h2>
         <p id="detailPrice" style="color: var(--prm); font-size:24px; font-weight:900; margin-bottom:20px;"></p>
         
-        <select id="orderSize"><option value="">Select Size</option><option>S</option><option>M</option><option>L</option><option>XL</option></select>
-        <input type="text" id="custName" placeholder="Full Name">
-        <textarea id="custAddr" placeholder="Delivery Address" rows="3"></textarea>
-        <button class="btn-buy" onclick="sendOrder()">ORDER ON WHATSAPP</button>
+        <div id="orderForm">
+            <select id="orderSize"><option value="">Select Size</option><option>S</option><option>M</option><option>L</option><option>XL</option></select>
+            <input type="text" id="custName" placeholder="Full Name">
+            <textarea id="custAddr" placeholder="Delivery Address" rows="3"></textarea>
+            <button id="buyBtn" class="btn-buy" onclick="sendOrder()">ORDER ON WHATSAPP</button>
+        </div>
     </div>
 </div>
 
 <div class="admin-drawer" id="adminDrawer">
-    <h3 style="margin-bottom:20px;">Admin Panel</h3>
+    <h3>Manage Store</h3>
     <input id="pName" placeholder="Product Name">
     <input id="pOldPrice" placeholder="MRP">
     <input id="pPrice" placeholder="Offer Price">
-    <select id="pCat"><option>Shirt</option><option>Tshirt</option><option>Hoodie</option></select>
-    <textarea id="pImg" placeholder="Image Link(s) - Use comma for multiple" rows="3"></textarea>
+    <select id="pCat"><option>Shirt</option><option>Tshirt</option></select>
+    <select id="pStock">
+        <option value="in">In Stock</option>
+        <option value="lim">Limited Stock</option>
+        <option value="out">Out of Stock</option>
+    </select>
+    <textarea id="pImg" placeholder="Image Link(s)" rows="3"></textarea>
     <button class="btn-buy" onclick="upload()">SAVE PRODUCT</button>
     <div id="adminList" style="margin-top:20px;"></div>
-    <button onclick="toggleAdmin()" style="margin-top:20px; opacity:0.5; background:none; border:none; color:#fff; width:100%;">Close</button>
+    <button onclick="toggleAdmin()" style="margin-top:20px; color:#555; background:none; border:none; width:100%;">Close</button>
 </div>
 
 <script>
-    // Firebase Setup
     const firebaseConfig = {
         apiKey: "AIzaSyC8bcL7IIgoRKQlp8XKYujbFySjCgEcsyY",
         authDomain: "fit-hub-a55e8.firebaseapp.com",
@@ -125,8 +126,8 @@
     const db = firebase.database().ref('products');
 
     let allProducts = [];
-    let activeP = null;
     let curCat = "All";
+    let activeP = null;
 
     db.on('value', snap => {
         const data = snap.val();
@@ -148,18 +149,21 @@
         const q = document.getElementById('search').value.toLowerCase();
         grid.innerHTML = "";
         
-        allProducts.filter(p => {
-            return p.name.toLowerCase().includes(q) && (curCat === "All" || p.cat === curCat);
-        }).forEach(p => {
+        allProducts.filter(p => p.name.toLowerCase().includes(q) && (curCat === "All" || p.cat === curCat)).forEach(p => {
             let disc = Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
             let img = p.img.split(',')[0].trim();
+            
+            // Stock Logic for Card
+            let sClass = p.stock === 'in' ? 'in-stock' : (p.stock === 'lim' ? 'lim-stock' : 'no-stock');
+            let sText = p.stock === 'in' ? 'Available' : (p.stock === 'lim' ? 'Only 2 Left!' : 'Out of Stock');
+
             grid.innerHTML += `
-                <div class="card" onclick="openDetail('${p.id}')">
+                <div class="card" onclick="openDetail('${p.id}')" style="${p.stock === 'out' ? 'opacity:0.7' : ''}">
                     ${disc > 0 ? `<div class="badge">${disc}% OFF</div>` : ''}
                     <img src="${img}">
                     <div class="info">
+                        <span class="stock-text ${sClass}"><span class="stock-dot" style="background:currentColor"></span>${sText}</span>
                         <h4>${p.name}</h4>
-                        <span class="old-price">₹${p.oldPrice}</span>
                         <span class="new-price">₹${p.price}</span>
                     </div>
                 </div>`;
@@ -172,8 +176,26 @@
         const s = document.getElementById('imageSlider');
         s.innerHTML = "";
         activeP.img.split(',').forEach(l => { s.innerHTML += `<img src="${l.trim()}">`; });
+        
         document.getElementById('detailName').innerText = activeP.name;
         document.getElementById('detailPrice').innerText = "₹" + activeP.price;
+
+        // Detail View Stock logic
+        const sDiv = document.getElementById('detailStock');
+        const bBtn = document.getElementById('buyBtn');
+        const oForm = document.getElementById('orderForm');
+
+        if(activeP.stock === 'out') {
+            sDiv.innerHTML = `<span class="no-stock" style="font-weight:bold">Sorry, this item is Out of Stock!</span>`;
+            bBtn.innerText = "OUT OF STOCK";
+            bBtn.classList.add('btn-disabled');
+            bBtn.onclick = null;
+        } else {
+            sDiv.innerHTML = activeP.stock === 'lim' ? `<span class="lim-stock" style="font-weight:bold">🔥 Limited Stock! Order soon.</span>` : `<span class="in-stock">✅ In Stock</span>`;
+            bBtn.innerText = "ORDER ON WHATSAPP";
+            bBtn.classList.remove('btn-disabled');
+            bBtn.onclick = sendOrder;
+        }
     }
 
     function closeDetail() { document.getElementById('detail-view').style.display = "none"; }
@@ -182,8 +204,8 @@
         const size = document.getElementById('orderSize').value;
         const name = document.getElementById('custName').value;
         const addr = document.getElementById('custAddr').value;
-        if(!size || !name || !addr) return alert("Fill all details!");
-        const msg = `*🛍️ NEW ORDER!*%0A%0A*Item:* ${activeP.name}%0A*Price:* ₹${activeP.price}%0A*Size:* ${size}%0A%0A*Address:* ${name}, ${addr}`;
+        if(!size || !name || !addr) return alert("Please fill all details!");
+        const msg = `*🛍️ NEW ORDER!*%0A*Item:* ${activeP.name}%0A*Price:* ₹${activeP.price}%0A*Size:* ${size}%0A*Details:* ${name}, ${addr}`;
         window.open(`https://wa.me/917736789255?text=${msg}`);
     }
 
@@ -192,14 +214,14 @@
         const old = document.getElementById('pOldPrice').value;
         const price = document.getElementById('pPrice').value;
         const cat = document.getElementById('pCat').value;
+        const stock = document.getElementById('pStock').value;
         const img = document.getElementById('pImg').value;
         if(name && price && img) {
-            db.push({name, oldPrice: old, price, cat, img});
+            db.push({name, oldPrice: old, price, cat, stock, img});
             alert("Added!");
         }
     }
 
-    // ADMIN TRIGGER (Hidden Trick)
     let clicks = 0;
     document.getElementById('adminTrigger').onclick = () => {
         clicks++;
@@ -210,8 +232,8 @@
         const list = document.getElementById('adminList');
         list.innerHTML = "";
         allProducts.forEach(p => {
-            list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; background:#1a1a24; border-radius:10px; margin-bottom:5px; font-size:12px;">
-                <span>${p.name}</span><span style="color:red" onclick="del('${p.id}')">Delete</span>
+            list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; background:#1a1a24; border-radius:10px; margin-bottom:5px; font-size:11px;">
+                <span>${p.name} (${p.stock})</span><span style="color:red" onclick="del('${p.id}')">Del</span>
             </div>`;
         });
     }
