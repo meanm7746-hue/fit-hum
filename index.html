@@ -1,415 +1,328 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ml">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FIT HUB V5 ULTRA PRO</title>
+<title>FIT HUB V5 - PREMIUM STORE</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-font-family:Arial;
-background:#07070a;
-color:#fff;
-}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#07070a; color:#fff; overflow-x:hidden;}
 
-/* HEADER */
-header{
-position:sticky;top:0;
-display:flex;justify-content:space-between;align-items:center;
-padding:16px;
-background:rgba(10,10,15,.92);
-backdrop-filter:blur(14px);
-border-bottom:1px solid rgba(255,255,255,.06);
-}
-.logo{
-font-size:28px;font-weight:900;
-color:#9d4edd;
-cursor:pointer;
-text-shadow:0 0 14px #9d4edd;
-}
-.btn{
-padding:10px 14px;
-border:none;
-border-radius:12px;
-background:#9d4edd;
-color:#fff;
-font-weight:700;
-cursor:pointer;
-}
+    /* HEADER */
+    header{
+        position:sticky; top:0; display:flex; justify-content:space-between; align-items:center;
+        padding:16px 20px; background:rgba(10,10,15,0.9); backdrop-filter:blur(15px);
+        border-bottom:1px solid rgba(255,255,255,0.1); z-index:1000;
+    }
+    .logo{ font-size:24px; font-weight:900; color:#9d4edd; cursor:pointer; text-shadow:0 0 15px #9d4edd; }
+    
+    .btn-cart{
+        padding:8px 16px; border:none; border-radius:10px; background:#9d4edd;
+        color:#fff; font-weight:700; cursor:pointer; transition:0.3s;
+    }
+    .btn-cart:hover{ background:#c77dff; transform:scale(1.05); }
 
-/* LAYOUT */
-.wrap{max-width:1200px;margin:auto;padding:20px}
+    /* SEARCH & FILTER */
+    .controls{ padding:20px; max-width:1200px; margin:auto; display:flex; gap:10px; }
+    input, select, textarea{
+        width:100%; padding:14px; margin:8px 0; border:1px solid rgba(255,255,255,0.1);
+        border-radius:12px; background:#15151e; color:#fff; outline:none;
+    }
 
-input,select,textarea{
-width:100%;
-padding:12px;
-margin:6px 0;
-border:none;
-border-radius:12px;
-background:#15151e;
-color:#fff;
-}
+    /* GRID & CARDS */
+    .wrap{ max-width:1200px; margin:auto; padding:0 20px 40px 20px; }
+    .grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:20px; }
+    
+    .card{
+        background:#121218; border-radius:20px; overflow:hidden;
+        transition:0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border:1px solid rgba(255,255,255,0.03);
+    }
+    .card:hover{ transform:translateY(-8px); border-color:#9d4edd; }
+    .card img{ width:100%; height:280px; object-fit:cover; }
+    .info{ padding:15px; }
+    .info h3{ font-size:18px; margin-bottom:5px; }
+    .price{ color:#c77dff; font-weight:900; font-size:20px; }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:16px;
-}
+    /* POPUP & PANELS */
+    .popup, .panel{
+        position:fixed; inset:0; background:rgba(0,0,0,0.9);
+        display:none; justify-content:center; align-items:center; z-index:2000;
+    }
+    .popup.show, .panel.show{ display:flex; }
+    .box{
+        max-width:450px; width:90%; background:#111118; padding:20px;
+        border-radius:24px; border:1px solid rgba(255,255,255,0.1);
+    }
+    .box img{ width:100%; border-radius:15px; margin-bottom:15px; }
 
-/* CARD */
-.card{
-background:#121218;
-border-radius:16px;
-overflow:hidden;
-cursor:pointer;
-transition:.2s;
-}
-.card:hover{transform:translateY(-5px)}
-.card img{width:100%;height:240px;object-fit:cover}
-.info{padding:12px}
-.price{color:#c77dff;font-weight:900}
+    .btn-row{ display:flex; gap:10px; margin-top:15px; }
+    .btn-action{
+        flex:1; padding:12px; border:none; border-radius:12px;
+        background:#1e1e2a; color:#fff; cursor:pointer; font-weight:600;
+    }
+    .btn-primary{ background:#9d4edd; }
 
-/* POPUP */
-.popup{
-position:fixed;inset:0;
-background:rgba(0,0,0,.85);
-display:none;
-justify-content:center;
-align-items:center;
-padding:20px;
-z-index:5000;
-}
-.popup.show{display:flex}
-.box{
-max-width:520px;
-width:100%;
-background:#111118;
-padding:16px;
-border-radius:18px;
-}
-.box img{
-width:100%;
-height:260px;
-object-fit:cover;
-border-radius:12px;
-}
-.row{display:flex;gap:10px;margin-top:10px}
-.small{
-flex:1;
-padding:10px;
-border:none;
-border-radius:10px;
-background:#1e1e2a;
-color:#fff;
-cursor:pointer;
-}
+    /* ADMIN PANEL RIGHT SIDE */
+    .admin-drawer{
+        position:fixed; top:0; right:-100%; width:350px; height:100%;
+        background:#0d0d13; padding:25px; transition:0.4s; z-index:3000; overflow-y:auto;
+    }
+    .admin-drawer.show{ right:0; }
 
-/* PANELS */
-.page{display:none;padding:20px}
-.page.show{display:block}
-
-.panel{
-position:fixed;
-top:0;
-right:-420px;
-width:380px;
-height:100%;
-background:#0d0d13;
-padding:18px;
-transition:.3s;
-overflow:auto;
-z-index:6000;
-}
-.panel.show{right:0}
-
-footer{text-align:center;padding:30px;opacity:.6}
+    footer{ text-align:center; padding:40px; opacity:0.5; font-size:12px; }
 </style>
 </head>
-
 <body>
 
 <header>
-<div class="logo" id="logo">FIT HUB V5</div>
-<button class="btn" onclick="openCart()">Cart (<span id="cartCount">0</span>)</button>
+    <div class="logo" id="logo">FIT HUB V5</div>
+    <button class="btn-cart" onclick="openCart()">Cart (<span id="cartCount">0</span>)</button>
 </header>
 
-<!-- HOME -->
-<div id="home">
-<div class="wrap">
+<div id="home-view">
+    <div class="controls">
+        <input id="search" placeholder="Search products..." oninput="render()">
+        <select id="filter" style="width:150px" onchange="render()">
+            <option value="">All</option>
+            <option>Shirt</option>
+            <option>Tshirt</option>
+            <option>Hoodie</option>
+            <option>Jeans</option>
+        </select>
+    </div>
 
-<input id="search" placeholder="Search..." oninput="render()">
-
-<select id="filter" onchange="render()">
-<option value="">All</option>
-<option>Shirt</option>
-<option>Tshirt</option>
-<option>Hoodie</option>
-<option>Jeans</option>
-</select>
-
-<div class="grid" id="grid"></div>
-
-</div>
+    <div class="wrap">
+        <div class="grid" id="productGrid"></div>
+    </div>
 </div>
 
-<!-- PRODUCT PAGE -->
-<div id="productPage" class="page">
-<button class="btn" onclick="back()">⬅ Back</button>
-
-<div class="box">
-<img id="pimg">
-<h2 id="pname"></h2>
-<div class="price" id="pprice"></div>
-
-<select id="size">
-<option>S</option><option>M</option><option>L</option><option>XL</option>
-</select>
-
-<input id="phone" placeholder="Phone">
-<textarea id="address" placeholder="Address"></textarea>
-
-<div class="row">
-<button class="small" onclick="order()">WhatsApp Order</button>
-<button class="small" onclick="addCart(current.id)">Add Cart</button>
-<button class="small" onclick="addWish(current.id)">Wishlist ❤️</button>
+<div id="product-view" style="display:none; padding:20px; max-width:600px; margin:auto;">
+    <button class="btn-action" onclick="showHome()">⬅ Back to Store</button>
+    <div class="box" style="width:100%; max-width:none; margin-top:20px;">
+        <img id="detailImg">
+        <h2 id="detailName"></h2>
+        <div class="price" id="detailPrice"></div>
+        
+        <label>Select Size:</label>
+        <select id="orderSize">
+            <option>S</option><option>M</option><option>L</option><option>XL</option>
+        </select>
+        
+        <input id="userPhone" placeholder="WhatsApp Number">
+        <textarea id="userAddress" placeholder="Delivery Address" rows="3"></textarea>
+        
+        <div class="btn-row">
+            <button class="btn-action btn-primary" onclick="placeOrder()">Order on WhatsApp</button>
+            <button class="btn-action" onclick="addToCart(currentProduct.id)">Add to Cart</button>
+        </div>
+    </div>
 </div>
 
-</div>
-</div>
-
-<!-- POPUP -->
-<div class="popup" id="popup">
-<div class="box">
-<img id="ppimg">
-<h2 id="ppname"></h2>
-<div class="price" id="ppprice"></div>
-
-<div class="row">
-<button class="small" onclick="openPage()">Open Page</button>
-<button class="small" onclick="closePopup()">Close</button>
-</div>
-</div>
-</div>
-
-<!-- CART PANEL -->
 <div class="panel" id="cartPanel">
-<h2>Cart</h2>
-<div id="cartList"></div>
-<button class="small" onclick="closeCart()">Close</button>
+    <div class="box">
+        <h2>Your Cart</h2>
+        <div id="cartItems" style="margin:15px 0; max-height:300px; overflow-y:auto;"></div>
+        <div class="btn-row">
+            <button class="btn-action" onclick="clearCart()">Clear Cart</button>
+            <button class="btn-action btn-primary" onclick="closeCart()">Close</button>
+        </div>
+    </div>
 </div>
 
-<!-- WISHLIST PANEL -->
-<div class="panel" id="wishPanel">
-<h2>Wishlist ❤️</h2>
-<div id="wishList"></div>
-<button class="small" onclick="closeWish()">Close</button>
+<div class="admin-drawer" id="adminPanel">
+    <h2>Admin Controls</h2>
+    <hr style="opacity:0.1; margin:15px 0;">
+    <input id="newName" placeholder="Product Name">
+    <input id="newPrice" placeholder="Price (₹)">
+    <input id="newCat" placeholder="Category (Shirt, Tshirt...)">
+    <input id="newImg" placeholder="Image URL (Highly Recommended)">
+    <p style="font-size:10px; opacity:0.5; margin-bottom:5px;">Or upload file (Slows down GitHub):</p>
+    <input type="file" id="fileImg" accept="image/*">
+    
+    <button class="btn-action btn-primary" style="width:100%" onclick="addNewProduct()">Add Product</button>
+    
+    <h3 style="margin-top:30px;">Manage Products</h3>
+    <div id="adminProductList"></div>
+    
+    <button class="btn-action" style="width:100%; margin-top:20px;" onclick="toggleAdmin()">Close Admin</button>
 </div>
 
-<!-- ADMIN PANEL -->
-<div class="panel" id="admin">
-<h2>Admin Panel</h2>
-
-<input id="aname" placeholder="Product Name">
-<input id="aprice" placeholder="Price">
-<input id="acat" placeholder="Category">
-<input type="file" id="aimg">
-
-<button class="btn" onclick="addProduct()">Add Product</button>
-<button class="small" onclick="closeAdmin()">Close</button>
-
-<hr style="margin:10px 0;opacity:.2">
-
-<h3>Orders (Local)</h3>
-<div id="orders"></div>
-
-</div>
-
-<footer>FIT HUB V5 ULTRA PRO</footer>
+<footer>FIT HUB V5 ULTRA PRO &copy; 2024</footer>
 
 <script>
+    /* --- DATA MANAGEMENT --- */
+    let products = JSON.parse(localStorage.getItem('fithub_products')) || [
+        {id: 1, name: "Premium Royal Shirt", price: "799", cat: "Shirt", img: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500"},
+        {id: 2, name: "Urban Street Tee", price: "499", cat: "Tshirt", img: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500"}
+    ];
+    let cart = JSON.parse(localStorage.getItem('fithub_cart')) || [];
+    let currentProduct = null;
+    let clickCount = 0;
 
-/* ADMIN */
-let pass="@yadh4u1";
-let taps=0;
+    function saveToStorage() {
+        localStorage.setItem('fithub_products', JSON.stringify(products));
+        localStorage.setItem('fithub_cart', JSON.stringify(cart));
+        updateCartCount();
+    }
 
-/* DATA */
-let current=null;
-let cart=[];
-let wish=[];
-let orders=JSON.parse(localStorage.getItem("orders")||"[]");
+    /* --- NAVIGATION --- */
+    function showHome() {
+        document.getElementById('home-view').style.display = 'block';
+        document.getElementById('product-view').style.display = 'none';
+    }
 
-let products=JSON.parse(localStorage.getItem("v5")||"[]");
+    function showProduct(id) {
+        currentProduct = products.find(p => p.id === id);
+        document.getElementById('home-view').style.display = 'none';
+        document.getElementById('product-view').style.display = 'block';
+        
+        document.getElementById('detailImg').src = currentProduct.img;
+        document.getElementById('detailName').innerText = currentProduct.name;
+        document.getElementById('detailPrice').innerText = "₹" + currentProduct.price;
+        window.scrollTo(0,0);
+    }
 
-if(products.length===0){
-products=[
-{id:1,name:"Royal Shirt",price:"799",cat:"Shirt",img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=900&q=80"},
-{id:2,name:"Urban Tee",price:"699",cat:"Tshirt",img:"https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80"}
-];
-save();
-}
+    /* --- RENDERING --- */
+    function render() {
+        const grid = document.getElementById('productGrid');
+        const searchTerm = document.getElementById('search').value.toLowerCase();
+        const filterVal = document.getElementById('filter').value;
+        
+        grid.innerHTML = "";
+        
+        const filtered = products.filter(p => {
+            return p.name.toLowerCase().includes(searchTerm) && (filterVal === "" || p.cat === filterVal);
+        });
 
-function save(){
-localStorage.setItem("v5",JSON.stringify(products));
-localStorage.setItem("orders",JSON.stringify(orders));
-}
+        filtered.forEach(p => {
+            grid.innerHTML += `
+                <div class="card" onclick="showProduct(${p.id})">
+                    <img src="${p.img}" loading="lazy">
+                    <div class="info">
+                        <h3>${p.name}</h3>
+                        <div class="price">₹${p.price}</div>
+                    </div>
+                </div>
+            `;
+        });
+        renderAdminList();
+    }
 
-/* ADMIN OPEN */
-logo.onclick=()=>{
-taps++;
-if(taps>=5){
-let p=prompt("Password");
-if(p===pass) admin.classList.add("show");
-taps=0;
-}
-}
+    /* --- CART SYSTEM --- */
+    function addToCart(id) {
+        cart.push(id);
+        saveToStorage();
+        alert("Added to cart!");
+    }
 
-/* IMAGE BASE64 */
-function toBase(file,cb){
-let r=new FileReader();
-r.onload=()=>cb(r.result);
-r.readAsDataURL(file);
-}
+    function updateCartCount() {
+        document.getElementById('cartCount').innerText = cart.length;
+    }
 
-/* ADD PRODUCT */
-function addProduct(){
-let file=aimg.files[0];
-if(!file)return alert("Upload image");
+    function openCart() {
+        const list = document.getElementById('cartItems');
+        list.innerHTML = cart.length === 0 ? "Cart is empty" : "";
+        
+        cart.forEach((itemId, index) => {
+            const p = products.find(x => x.id === itemId);
+            if(p) {
+                list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; background:#1a1a24; margin-bottom:5px; border-radius:8px;">
+                    <span>${p.name}</span>
+                    <b>₹${p.price}</b>
+                </div>`;
+            }
+        });
+        document.getElementById('cartPanel').classList.add('show');
+    }
 
-toBase(file,(img)=>{
-products.push({
-id:Date.now(),
-name:aname.value,
-price:aprice.value,
-cat:acat.value,
-img:img
-});
-save();
-render();
-});
-}
+    function closeCart() { document.getElementById('cartPanel').classList.remove('show'); }
+    function clearCart() { cart = []; saveToStorage(); openCart(); }
 
-/* RENDER */
-function render(){
-grid.innerHTML="";
-let q=search.value.toLowerCase();
-let f=filter.value;
+    /* --- ORDER SYSTEM (WHATSAPP) --- */
+    function placeOrder() {
+        const phone = document.getElementById('userPhone').value;
+        const addr = document.getElementById('userAddress').value;
+        
+        if(!phone || !addr) return alert("Please fill contact details");
 
-products.filter(p=>{
-return p.name.toLowerCase().includes(q)&&(f==""||p.cat==f);
-}).forEach(p=>{
-grid.innerHTML+=`
-<div class="card" onclick="openPopup(${p.id})">
-<img src="${p.img}">
-<div class="info">
-<h3>${p.name}</h3>
-<div class="price">₹${p.price}</div>
-</div>
-</div>`;
-});
-}
+        const msg = `*NEW ORDER FROM FIT HUB*%0A` +
+                    `--------------------------%0A` +
+                    `*Product:* ${currentProduct.name}%0A` +
+                    `*Price:* ₹${currentProduct.price}%0A` +
+                    `*Size:* ${document.getElementById('orderSize').value}%0A%0A` +
+                    `*Delivery Details:*%0A` +
+                    `📞 Phone: ${phone}%0A` +
+                    `📍 Address: ${addr}`;
 
-/* POPUP */
-function openPopup(id){
-current=products.find(x=>x.id===id);
-ppimg.src=current.img;
-ppname.innerText=current.name;
-ppprice.innerText="₹"+current.price;
-popup.classList.add("show");
-}
-function closePopup(){popup.classList.remove("show");}
+        window.open(`https://wa.me/917736789255?text=${msg}`);
+    }
 
-/* FULL PAGE */
-function openPage(){
-popup.classList.remove("show");
-home.style.display="none";
-productPage.classList.add("show");
+    /* --- ADMIN LOGIC --- */
+    document.getElementById('logo').onclick = () => {
+        clickCount++;
+        if(clickCount >= 5) {
+            const pw = prompt("Admin Password?");
+            if(pw === "@yadh4u1") toggleAdmin();
+            clickCount = 0;
+        }
+    };
 
-pimg.src=current.img;
-pname.innerText=current.name;
-pprice.innerText="₹"+current.price;
-}
-function back(){
-home.style.display="block";
-productPage.classList.remove("show");
-}
+    function toggleAdmin() {
+        document.getElementById('adminPanel').classList.toggle('show');
+    }
 
-/* CART */
-function addCart(id){
-cart.push(id);
-cartCount.innerText=cart.length;
-renderCart();
-}
-function openCart(){
-cartPanel.classList.add("show");
-renderCart();
-}
-function closeCart(){cartPanel.classList.remove("show");}
+    function addNewProduct() {
+        const name = document.getElementById('newName').value;
+        const price = document.getElementById('newPrice').value;
+        const cat = document.getElementById('newCat').value;
+        const imgUrl = document.getElementById('newImg').value;
+        const file = document.getElementById('fileImg').files[0];
 
-function renderCart(){
-cartList.innerHTML="";
-cart.forEach(id=>{
-let p=products.find(x=>x.id===id);
-if(p){
-cartList.innerHTML+=`<div>${p.name} - ₹${p.price}</div>`;
-}
-});
-}
+        if(!name || !price) return alert("Details missing");
 
-/* WISHLIST */
-function addWish(id){
-wish.push(id);
-wishPanel.classList.add("show");
-renderWish();
-}
-function closeWish(){wishPanel.classList.remove("show");}
+        const add = (imgSrc) => {
+            products.push({ id: Date.now(), name, price, cat, img: imgSrc });
+            saveToStorage();
+            render();
+            alert("Product Added!");
+        };
 
-function renderWish(){
-wishList.innerHTML="";
-wish.forEach(id=>{
-let p=products.find(x=>x.id===id);
-if(p){
-wishList.innerHTML+=`<div>${p.name}</div>`;
-}
-});
-}
+        if(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => add(e.target.result);
+            reader.readAsDataURL(file);
+        } else {
+            add(imgUrl || "https://via.placeholder.com/300");
+        }
+    }
 
-/* ORDER */
-function order(){
+    function deleteProduct(id) {
+        if(confirm("Delete this product?")) {
+            products = products.filter(p => p.id !== id);
+            saveToStorage();
+            render();
+        }
+    }
 
-let o={
-product:current.name,
-price:current.price,
-size:size.value,
-phone:phone.value,
-address:address.value,
-time:new Date().toLocaleString()
-};
+    function renderAdminList() {
+        const list = document.getElementById('adminProductList');
+        list.innerHTML = "";
+        products.forEach(p => {
+            list.innerHTML += `
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:#1a1a24; padding:5px; border-radius:8px;">
+                    <img src="${p.img}" style="width:40px; height:40px; object-fit:cover; border-radius:5px;">
+                    <span style="flex:1; font-size:12px;">${p.name}</span>
+                    <button onclick="deleteProduct(${p.id})" style="background:red; color:white; border:none; padding:5px; border-radius:5px; cursor:pointer;">X</button>
+                </div>
+            `;
+        });
+    }
 
-orders.push(o);
-save();
-
-let msg=`Order
-Product:${o.product}
-Price:${o.price}
-Size:${o.size}
-Phone:${o.phone}
-Address:${o.address}`;
-
-window.open("https://wa.me/917736789255?text="+encodeURIComponent(msg));
-}
-
-/* ADMIN ORDERS */
-setInterval(()=>{
-ordersList.innerHTML=orders.map(o=>
-`<div style="padding:6px;border-bottom:1px solid #222">
-${o.product} - ${o.phone}
-</div>`).join("");
-},1000);
-
-render();
+    // Init
+    updateCartCount();
+    render();
 
 </script>
-
 </body>
 </html>
