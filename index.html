@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FIT HUB V5 - UPDATED BOT</title>
+<title>FIT HUB V5 - AUTO SKU</title>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -80,7 +80,7 @@
 </header>
 
 <div id="home-view" class="wrap">
-    <input type="text" id="search" class="search-box" placeholder="Search by name or code..." oninput="render()">
+    <input type="text" id="search" class="search-box" placeholder="Search products or use secret code..." oninput="render()">
     <div class="cat-scroll" id="catTabs">
         <button class="cat-btn active" onclick="filterCat('All', this)">All</button>
         <button class="cat-btn" onclick="filterCat('Shirt', this)">Shirts</button>
@@ -114,7 +114,7 @@
 
 <div class="admin-drawer" id="adminDrawer">
     <h3>Admin Settings</h3>
-    <input id="pSku" placeholder="Product Code (Secret Code)">
+    <p style="font-size: 11px; opacity: 0.6; margin-bottom: 10px;">* Code is generated automatically</p>
     <input id="pName" placeholder="Product Name">
     <input id="pOldPrice" placeholder="MRP">
     <input id="pPrice" placeholder="Offer Price">
@@ -173,7 +173,6 @@
         render();
     }
 
-    // UPDATED RENDER LOGIC FOR SECRET CODE SEARCH
     function render() {
         const grid = document.getElementById('productGrid');
         const q = document.getElementById('search').value.toLowerCase();
@@ -181,7 +180,7 @@
         
         allProducts.forEach(p => {
             const nameMatch = p.name.toLowerCase().includes(q);
-            const skuMatch = p.sku && p.sku.toLowerCase() === q; // Exact match for secret code
+            const skuMatch = p.sku && p.sku.toString() === q; // Matches secret 4-digit code
             const catMatch = (curCat === "All" || p.cat === curCat);
 
             if ((nameMatch || skuMatch) && catMatch) {
@@ -234,11 +233,25 @@
     }
 
     function upload() {
-        const sku = document.getElementById('pSku').value, name = document.getElementById('pName').value, 
-              price = document.getElementById('pPrice').value, oldPrice = document.getElementById('pOldPrice').value, 
-              cat = document.getElementById('pCat').value, stock = document.getElementById('pStock').value, 
-              video = document.getElementById('pVideo').value, img = document.getElementById('pImg').value;
-        if(name && price && img) { db.push({sku, name, oldPrice, price, cat, stock, video, img}); alert("Added!"); }
+        // GENERATE AUTO 4-DIGIT CODE
+        const autoSku = Math.floor(1000 + Math.random() * 9000);
+        
+        const name = document.getElementById('pName').value, 
+              price = document.getElementById('pPrice').value, 
+              oldPrice = document.getElementById('pOldPrice').value, 
+              cat = document.getElementById('pCat').value, 
+              stock = document.getElementById('pStock').value, 
+              video = document.getElementById('pVideo').value, 
+              img = document.getElementById('pImg').value;
+
+        if(name && price && img) { 
+            db.push({sku: autoSku, name, oldPrice, price, cat, stock, video, img}); 
+            alert("Added Successfully! Product Code is: " + autoSku); 
+            // Clear inputs
+            document.getElementById('pName').value = "";
+            document.getElementById('pPrice').value = "";
+            document.getElementById('pImg').value = "";
+        }
     }
 
     let clicks = 0;
@@ -246,15 +259,17 @@
         clicks++; if(clicks >= 5) { if(prompt("Pass?") === "@yadh4u1") toggleAdmin(); clicks = 0; }
     };
     function toggleAdmin() { document.getElementById('adminDrawer').classList.toggle('open'); }
+    
     function renderAdmin() {
         const list = document.getElementById('adminList'); list.innerHTML = "";
         allProducts.forEach(p => {
             list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; background:var(--input); border-radius:10px; margin-bottom:5px; font-size:11px;">
-                <span>${p.sku || 'No Code'} - ${p.name}</span><span style="color:red" onclick="del('${p.id}')">Del</span>
+                <span>#${p.sku || 'N/A'} - ${p.name}</span><span style="color:red; cursor:pointer;" onclick="del('${p.id}')">Del</span>
             </div>`;
         });
     }
-    function del(id) { if(confirm("Delete?")) db.child(id).remove(); }
+    function del(id) { if(confirm("Delete this product?")) db.child(id).remove(); }
 </script>
 </body>
-</html>
+                                                                                                                         </html>
+    
