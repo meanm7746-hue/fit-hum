@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FIT HUB V5 - FULL PAGE STORE</title>
+<title>FIT HUB V5 - ADVANCED STORE</title>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:sans-serif; background:#07070a; color:#fff;}
+    body{font-family:sans-serif; background:#07070a; color:#fff; -webkit-tap-highlight-color: transparent;}
     
     header{position:sticky; top:0; display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background:rgba(10,10,15,0.9); backdrop-filter:blur(10px); border-bottom:1px solid #333; z-index:1000;}
     .logo{font-size:22px; font-weight:900; color:#9d4edd; cursor:pointer;}
     
     .wrap{max-width:1200px; margin:auto; padding:20px;}
-    .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:15px;}
+    .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:15px;}
     
     .card{background:#121218; border-radius:15px; overflow:hidden; position:relative; border:1px solid #222; cursor:pointer;}
     .badge{position:absolute; top:10px; left:10px; background:#ff206e; color:#fff; padding:4px 8px; border-radius:5px; font-size:11px; font-weight:bold; z-index:10;}
@@ -32,15 +32,22 @@
         background: #07070a; display: none; z-index: 2000; overflow-y: auto;
     }
     .detail-container { max-width: 500px; margin: auto; padding: 20px; }
-    .detail-img { width: 100%; border-radius: 20px; margin-bottom: 20px; border: 1px solid #333; }
     
-    .back-btn { background: #1a1a24; color: #fff; padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer; margin-bottom: 15px; }
-    
-    input, textarea, select, .btn-main { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: none; outline: none; font-size: 14px; }
-    input, textarea { background: #1a1a24; color: #fff; border: 1px solid #333; }
-    .btn-main { background: #9d4edd; color: #fff; font-weight: bold; cursor: pointer; }
+    /* IMAGE SLIDER */
+    .slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: 20px; gap: 10px; margin-bottom: 15px; }
+    .slider img { width: 100%; flex-shrink: 0; scroll-snap-align: start; height: 400px; object-fit: cover; border: 1px solid #333; }
+    .slider::-webkit-scrollbar { display: none; }
 
-    .admin-drawer { position: fixed; top: 0; right: -100%; width: 320px; height: 100%; background: #0d0d13; padding: 20px; transition: 0.4s; z-index: 3000; border-left: 2px solid #9d4edd; }
+    .action-row { display: flex; gap: 10px; margin-bottom: 15px; }
+    .back-btn, .share-btn { flex: 1; padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; }
+    .back-btn { background: #1a1a24; color: #fff; }
+    .share-btn { background: #25d366; color: #fff; }
+    
+    input, textarea, select, .btn-main { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: none; outline: none; }
+    input, textarea { background: #1a1a24; color: #fff; border: 1px solid #333; }
+    .btn-main { background: #9d4edd; color: #fff; font-weight: bold; cursor: pointer; font-size: 16px; }
+
+    .admin-drawer { position: fixed; top: 0; right: -100%; width: 320px; height: 100%; background: #0d0d13; padding: 20px; transition: 0.4s; z-index: 3000; border-left: 2px solid #9d4edd; overflow-y: auto; }
     .admin-drawer.open { right: 0; }
 </style>
 </head>
@@ -51,38 +58,43 @@
 </header>
 
 <div id="home-view" class="wrap">
-    <input type="text" id="search" placeholder="Search products..." oninput="render()" style="background:#15151e; color:#fff; padding:15px; border-radius:12px; width:100%; border:1px solid #222; margin-bottom:20px;">
+    <input type="text" id="search" placeholder="Search clothes..." oninput="render()" style="background:#15151e; color:#fff; padding:15px; border-radius:12px; width:100%; border:1px solid #222; margin-bottom:20px;">
     <div class="grid" id="productGrid"></div>
 </div>
 
 <div id="detail-view">
     <div class="detail-container">
-        <button class="back-btn" onclick="closeDetail()">⬅ Back to Store</button>
-        <img id="detailImg" class="detail-img">
-        <h2 id="detailName" style="color:#9d4edd;"></h2>
-        <p id="detailPrice" style="color:#c77dff; font-weight:bold; font-size:20px; margin-bottom:15px;"></p>
+        <div class="action-row">
+            <button class="back-btn" onclick="closeDetail()">⬅ Back</button>
+            <button class="share-btn" onclick="shareProduct()">WhatsApp Share 🔗</button>
+        </div>
+
+        <div id="imageSlider" class="slider"></div>
+        <p style="text-align: center; font-size: 10px; color: #555; margin-bottom: 10px;">Swipe for more images ⮕</p>
+
+        <h2 id="detailName" style="color:#9d4edd; margin-bottom: 5px;"></h2>
+        <p id="detailPrice" style="color:#c77dff; font-weight:bold; font-size:22px; margin-bottom:20px;"></p>
         
-        <div style="background:#121218; padding:20px; border-radius:15px;">
-            <h3 style="margin-bottom:10px; font-size:16px;">Order Details:</h3>
+        <div style="background:#121218; padding:20px; border-radius:15px; border: 1px solid #222;">
             <select id="orderSize">
-                <option value="">Select Size</option>
-                <option>S</option><option>M</option><option>L</option><option>XL</option>
+                <option value="">Choose Size</option>
+                <option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option>
             </select>
             <input type="text" id="custName" placeholder="Full Name">
-            <input type="tel" id="custPhone" placeholder="WhatsApp Number">
-            <textarea id="custAddr" placeholder="Full Address with Landmark" rows="3"></textarea>
-            <button class="btn-main" onclick="sendOrder()">Place Order via WhatsApp</button>
+            <input type="tel" id="custPhone" placeholder="Mobile Number">
+            <textarea id="custAddr" placeholder="Complete Address" rows="3"></textarea>
+            <button class="btn-main" onclick="sendOrder()">Confirm Order via WhatsApp</button>
         </div>
     </div>
 </div>
 
 <div class="admin-drawer" id="adminDrawer">
     <h3>Add Product</h3>
-    <input id="pName" placeholder="Product Name">
+    <input id="pName" placeholder="Name">
     <input id="pOldPrice" placeholder="MRP">
     <input id="pPrice" placeholder="Offer Price">
-    <input id="pCat" placeholder="Category">
-    <input id="pImg" placeholder="Image Link">
+    <p style="font-size: 10px; color: #888;">For multiple images, separate links with a comma (,)</p>
+    <textarea id="pImg" placeholder="Image Link 1, Link 2..." rows="4"></textarea>
     <button class="btn-main" onclick="upload()">Save Product</button>
     <hr style="opacity:0.1; margin:20px 0;">
     <div id="adminList"></div>
@@ -114,13 +126,16 @@
 
     function render() {
         const grid = document.getElementById('productGrid');
+        const q = document.getElementById('search').value.toLowerCase();
         grid.innerHTML = "";
-        allProducts.forEach(p => {
+        allProducts.filter(p => p.name.toLowerCase().includes(q)).forEach(p => {
             let discount = Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
+            // Show first image in grid
+            let firstImg = p.img.split(',')[0].trim();
             grid.innerHTML += `
                 <div class="card" onclick="openDetail('${p.id}')">
                     ${discount > 0 ? `<div class="badge">${discount}% OFF</div>` : ''}
-                    <img src="${p.img}">
+                    <img src="${firstImg}">
                     <div class="info">
                         <h4>${p.name}</h4>
                         <span class="old-price">₹${p.oldPrice}</span>
@@ -135,10 +150,22 @@
         document.getElementById('home-view').style.display = "none";
         document.getElementById('detail-view').style.display = "block";
         
-        document.getElementById('detailImg').src = activeProduct.img;
+        // Setup Slider
+        const slider = document.getElementById('imageSlider');
+        slider.innerHTML = "";
+        let imgList = activeProduct.img.split(',');
+        imgList.forEach(link => {
+            slider.innerHTML += `<img src="${link.trim()}">`;
+        });
+
         document.getElementById('detailName').innerText = activeProduct.name;
-        document.getElementById('detailPrice').innerText = "Price: ₹" + activeProduct.price;
+        document.getElementById('detailPrice').innerText = "₹" + activeProduct.price;
         window.scrollTo(0,0);
+    }
+
+    function shareProduct() {
+        const text = `Hey! Check out this *${activeProduct.name}* at FIT HUB V5.%0AOffer Price: *₹${activeProduct.price}*%0AView here: ${window.location.href}`;
+        window.open(`https://wa.me/?text=${text}`);
     }
 
     function closeDetail() {
@@ -166,6 +193,7 @@
         if(name && price && img) {
             db.push({name, oldPrice, price, img});
             alert("Added!");
+            document.querySelectorAll('#adminDrawer input, #adminDrawer textarea').forEach(i => i.value = "");
         }
     }
 
@@ -179,8 +207,8 @@
         const list = document.getElementById('adminList');
         list.innerHTML = "";
         allProducts.forEach(p => {
-            list.innerHTML += `<div style="display:flex; justify-content:space-between; margin-top:5px;">
-                <span>${p.name}</span><span style="color:red" onclick="del('${p.id}')">Del</span>
+            list.innerHTML += `<div style="display:flex; justify-content:space-between; margin-top:5px; background:#1a1a24; padding:8px; border-radius:5px;">
+                <span style="font-size:12px;">${p.name}</span><span style="color:red; cursor:pointer;" onclick="del('${p.id}')">Del</span>
             </div>`;
         });
     }
