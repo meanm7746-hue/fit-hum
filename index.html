@@ -80,7 +80,7 @@
 </header>
 
 <div id="home-view" class="wrap">
-    <input type="text" id="search" class="search-box" placeholder="Search premium clothes..." oninput="render()">
+    <input type="text" id="search" class="search-box" placeholder="Search by name or code..." oninput="render()">
     <div class="cat-scroll" id="catTabs">
         <button class="cat-btn active" onclick="filterCat('All', this)">All</button>
         <button class="cat-btn" onclick="filterCat('Shirt', this)">Shirts</button>
@@ -114,7 +114,7 @@
 
 <div class="admin-drawer" id="adminDrawer">
     <h3>Admin Settings</h3>
-    <input id="pSku" placeholder="Product Code">
+    <input id="pSku" placeholder="Product Code (Secret Code)">
     <input id="pName" placeholder="Product Name">
     <input id="pOldPrice" placeholder="MRP">
     <input id="pPrice" placeholder="Offer Price">
@@ -143,7 +143,6 @@
     let curCat = "All";
     let activeP = null;
 
-    // Updated Telegram Config
     const tgToken = "8685997452:AAFLx6-5XA7lcl32kqBt3iUC1alhMYvrQKI";
     const tgChatId = "1963316264"; 
 
@@ -174,20 +173,28 @@
         render();
     }
 
+    // UPDATED RENDER LOGIC FOR SECRET CODE SEARCH
     function render() {
         const grid = document.getElementById('productGrid');
         const q = document.getElementById('search').value.toLowerCase();
         grid.innerHTML = "";
-        allProducts.filter(p => p.name.toLowerCase().includes(q) && (curCat === "All" || p.cat === curCat)).forEach(p => {
-            let img = p.img.split(',')[0].trim();
-            grid.innerHTML += `
-                <div class="card" onclick="openDetail('${p.id}')">
-                    <img src="${img}">
-                    <div class="info">
-                        <h4>${p.name}</h4>
-                        <span class="new-price">₹${p.price}</span>
-                    </div>
-                </div>`;
+        
+        allProducts.forEach(p => {
+            const nameMatch = p.name.toLowerCase().includes(q);
+            const skuMatch = p.sku && p.sku.toLowerCase() === q; // Exact match for secret code
+            const catMatch = (curCat === "All" || p.cat === curCat);
+
+            if ((nameMatch || skuMatch) && catMatch) {
+                let img = p.img.split(',')[0].trim();
+                grid.innerHTML += `
+                    <div class="card" onclick="openDetail('${p.id}')">
+                        <img src="${img}">
+                        <div class="info">
+                            <h4>${p.name}</h4>
+                            <span class="new-price">₹${p.price}</span>
+                        </div>
+                    </div>`;
+            }
         });
     }
 
